@@ -240,17 +240,34 @@ namespace ft {
 		*current_end = value;
 	}
 
-	void	Vector<T, Allocator>::push_back(const T &value) {
+	void	Vector<T, Allocator>::pop_back(const T &value) {
 		current_end--;
 	}
 
-	void	resize(size_type count) {
+	void	Vector<T, Allocator>::resize(size_type count) {
 		if (count <= current_end - buffer_start) {
 			while (current_end - buffer_start > count) {
 				current_end--;
 			}
 		} else {
-
+			this->reserve(count - (current_end - buffer_start));
 		}
+	}
+
+	void	Vector<T, Allocator>::swap(Vector &other) {
+		size_type	old_bsize = buffer_size;
+		iterator	old_start = buffer_start;
+		iterator	old_end = current_end;
+		iterator	old_eob = end_of_buffer;
+
+		buffer_size = other.buffer_size;
+		buffer_start = other.buffer_start;
+		current_end = other.current_end;
+		end_of_buffer = other.end_of_buffer;
+
+		other.buffer_size = old_bsize;
+		other.buffer_start = old_start;
+		other.current_end = old_end;
+		other.end_of_buffer = old_eob;
 	}
 }
