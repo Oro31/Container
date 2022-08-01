@@ -29,6 +29,49 @@ namespace ft {
 			iterator	end_of_buffer;
 
 		public:
+
+			class MyIterator {
+				using value_type = T;
+				using pointer = T*;
+				using reference = T&;
+				using difference_type = std::ptrdiff_t;
+				using iterator_category = std::random_acces_iterator_tag;
+
+				MyIterator() : v(nullptr), i(0) {};
+				MyIterator(Vector<T> *v, int i) : v(v), i(i) {};
+
+				reference operator*() {return (*v)[i];};
+				const reference operator*() const {return (*v)[i];};
+				pointer operator->() {return &((*v)[i]);};
+				const pointer operator->() const {return &((*v)[i]);};
+				reference operator[](int m) {return (*v)[i + m];};
+				const reference operator[](int m) const {return (*v)[i];};
+
+				MyIterator &operator++() {++i; return *this;};
+				MyIterator &operator--() {--i; return *this;};
+				MyIterator operator++(int) {MyIterator r(*this); ++i; return r;};
+				MyIterator operator--(int) {MyIterator r(*this); --i; return r;};
+
+				MyIterator &operator+=(int n) {i += n; return *this;};
+				MyIterator &operator-=(int n) {i -= n; return *this;};
+
+				MyIterator operator+(int n) const {MyIterator r(*this); return r += n;};
+				MyIterator operator-(int n) const {MyIterator r(*this); return r -= n;};
+
+				difference_type operator-(MyIterator const &r) const {return i - r.i;};
+
+				bool operator<(MyIterator const &r) const {return i < r.i;};
+				bool operator<=(MyIterator const &r) const {return i <= r.i;};
+				bool operator>(MyIterator const &r) const {return i > r.i;};
+				bool operator>=(MyIterator const &r) const {return i >= r.i;};
+				bool operator!=(const MyIterator &r) const {return i != r.i;};
+				bool operator==(const MyIterator &r) const {return i == r.i;};
+
+				private:
+				Vector<T>	*v;
+				int			i;
+			};
+
 			template<class Iterator>
 			Vector(Iterator start, Iteartor finish,
 					Allocator alloc = Allocator());
