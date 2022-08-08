@@ -1,8 +1,15 @@
 #include <iostream>
-#include "ft_vector.hpp"
+#include "vector.hpp"
 
 int	main(void) {
-	ft::vector<int>	v({1, 2, 3});
-	std::cout << "first = " << p.first << "\nsecond = " << p.second << std::endl;
+	try {
+		ft::vector<std::string>	v(5);
+		for (ft::vector<std::string>::iterator it = v.begin();
+				it != v.end(); it++) {
+			std::cout << "out: " << *it << "." << std::endl;
+		}
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
 	return 0;
 }

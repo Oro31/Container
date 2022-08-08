@@ -14,15 +14,32 @@ namespace ft {
 
 			MyIterator() : p(0) {};
 			MyIterator(T *x) : p(x) {};
-			MyIterator(const MyIterator &mit) {*this = mit;};
-			MyIterator &operator++() {++p; return *this;};
-			MyIterator operator++(int) {MyIterator tmp(*this); operator++(); return tmp;};
-			MyIterator operator+(int n) const {MyIterator r(*this); for(int i=0; i<n; i++) {r++;} return r;};
 			MyIterator &operator=(const pointer it) {p = it; return *this;};
+
+			reference operator*() {return *p;};
+			const reference operator*() const {return *p;};
+			pointer base() {return p;};
+			const pointer base() const {return p;};
+
+//			MyIterator(const MyIterator &mit) {*this = mit;};
+
+			MyIterator &operator++() {++p; return *this;};
+			MyIterator &operator--() {--p; return *this;};
+			MyIterator operator++(int) {MyIterator tmp(*this); operator++(); return tmp;};
+			MyIterator operator--(int) {MyIterator tmp(*this); operator--(); return tmp;};
+
+			MyIterator operator+(int n) const {MyIterator r(*this); for(int i=0; i<n; i++) {r++;} return r;};
+			MyIterator operator-(int n) const {MyIterator r(*this); for(int i=0; i<n; i++) {r--;} return r;};
+			difference_type operator-(MyIterator const &second) const {
+				return (this->base() - second.base());
+			};
+
 			bool operator==(const MyIterator &rhs) const {return p==rhs.p;};
 			bool operator!=(const MyIterator &rhs) const {return p!=rhs.p;};
-			T &operator*() {return *p;};
-			const pointer base() const {return p;};
+			bool operator>(const MyIterator &rhs) const {return p>rhs.p;};
+			bool operator>=(const MyIterator &rhs) const {return p>=rhs.p;};
+			bool operator<(const MyIterator &rhs) const {return p<rhs.p;};
+			bool operator<=(const MyIterator &rhs) const {return p<=rhs.p;};
 
 		private:
 			pointer	p;
@@ -59,41 +76,46 @@ namespace ft {
 
 			explicit vector(const allocator_type &alloc = allocator_type()) : buffer_start(0),
 				current_end(0), end_of_buffer(0) {};
-			explicit vector(size_type n, const value_type &val) {
+			explicit vector(size_type n, const value_type &val = value_type(),
+					const allocator_type &alloc = allocator_type()) {
 				T	*p = the_allocator.allocate(n * 2);
 				iterator	al(p);
 				buffer_start = al;
 				end_of_buffer = buffer_start;
 				for (int i = 0; i < n * 2; i++) {
 					end_of_buffer++;
-					std::cout << (unsigned long)*end_of_buffer << "\n";
 				}
 				current_end = buffer_start;
 				for (int i = 0; i < n; i++) {
 					the_allocator.construct(current_end.base(), val);
 					current_end++;
-					std::cout << (unsigned long)*current_end << "\n";
 				}
 			};
+			template<class InputIterator>
+			vector(InputIterator first, InputIterator last,
+					const allocator_type &alloc = allocator_type()) : buffer_start(0),
+		current_end(0), end_of_buffer(0) {
+				size_t	buf_size = last - first;
+				the_allocator = alloc;
+				buffer_start = the_allocator.allocate(buf_size);
+				end_of_buffer = buffer_start + buf_size;
+				for (current_end = buffer_start; first != last; current_end++, start++) {
+					the_allocator.construct(current_end, *start);
+				}
+				std::unique(begin(), end());
+			};
+			~vector() {
+				for (iterator it = buffer_start; it != current_end; it++) {
+					the_allocator.destroy(it.base());
+				}
+				the_allocator.deallocate(buffer_start.base(), end_of_buffer.base() - buffer_start.base());
+			};
 			reference at(size_type pos) {
-				std::cout << (unsigned long)*buffer_start
-					<< "\n"
-					<< (unsigned long)*(buffer_start + pos)
-					<< "\n"
-					<< (unsigned long)*current_end
-					<< "\n"
-					<< (unsigned long)*end_of_buffer
-					<< std::endl;
-				if ((unsigned long)*(buffer_start + pos) > (unsigned long)*current_end) {
+				if ((buffer_start + pos).base() - current_end.base() >= 0) {
 					throw "out of range";
 				}
 				return *(buffer_start + pos);
 			};
-/*			template<class InputIterator>
-			vector(InputIterator first, InputIterator last,
-					const allocator_type &alloc = allocator_type()) {
-				
-			}*/
 	};
 
 }
