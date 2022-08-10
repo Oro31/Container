@@ -13,23 +13,30 @@ namespace ft {
 			typedef std::random_access_iterator_tag	iterator_category;
 
 			MyIterator() : p(0) {};
-			MyIterator(T *x) : p(x) {};
+			MyIterator(pointer x) : p(x) {};
 			MyIterator &operator=(const pointer it) {p = it; return *this;};
+			MyIterator(const MyIterator &mit) {*this = mit;};
 
 			reference operator*() {return *p;};
 			const reference operator*() const {return *p;};
+			pointer operator->() {return p;};
+//			const pointer operator->() const {return p;};
 			pointer base() {return p;};
 			const pointer base() const {return p;};
 
-//			MyIterator(const MyIterator &mit) {*this = mit;};
+//			value_type &operator=(const reference other) {*this = other; return *this;};
 
 			MyIterator &operator++() {++p; return *this;};
 			MyIterator &operator--() {--p; return *this;};
 			MyIterator operator++(int) {MyIterator tmp(*this); operator++(); return tmp;};
 			MyIterator operator--(int) {MyIterator tmp(*this); operator--(); return tmp;};
 
-			MyIterator operator+(int n) const {MyIterator r(*this); for(int i=0; i<n; i++) {r++;} return r;};
-			MyIterator operator-(int n) const {MyIterator r(*this); for(int i=0; i<n; i++) {r--;} return r;};
+			MyIterator operator+=(int n) const {MyIterator r(p); for(int i=0; i<n; i++) {r++;} return r;};
+			MyIterator operator-=(int n) const {MyIterator r(p); for(int i=0; i<n; i++) {r--;} return r;};
+			reference operator[](size_t n) {p += n; return *p;};
+
+			MyIterator operator+(int n) const {MyIterator r(*this); r+=n; return r;};
+			MyIterator operator-(int n) const {MyIterator r(*this); r-=n; return r;};
 			difference_type operator-(MyIterator const &second) const {
 				return (this->base() - second.base());
 			};
@@ -99,10 +106,10 @@ namespace ft {
 				the_allocator = alloc;
 				buffer_start = the_allocator.allocate(buf_size);
 				end_of_buffer = buffer_start + buf_size;
-				for (current_end = buffer_start; first != last; current_end++, start++) {
-					the_allocator.construct(current_end, *start);
+				for (current_end = buffer_start; first != last; current_end++, first++) {
+					the_allocator.construct(current_end, *first);
 				}
-				std::unique(begin(), end());
+//				std::unique(begin(), end());
 			};
 			~vector() {
 				for (iterator it = buffer_start; it != current_end; it++) {
