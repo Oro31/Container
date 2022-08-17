@@ -21,7 +21,7 @@ namespace ft {
 			pointer operator->() {return p;};
 //			const pointer operator->() const {return p;};
 			pointer base() {return p;};
-//			const pointer base() const {return p;};
+			const pointer base() const {return p;};
 
 //			value_type &operator=(const reference other) {*this = other; return *this;};
 

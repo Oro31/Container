@@ -6,11 +6,11 @@ int	main(void) {
 	try {
 		ft::vector<std::string>	v(5);
 		std::fill(v.begin(), v.end(), "yo");
+		ft::vector<std::string> w(v);
 		ft::vector<std::string>::iterator it = v.begin();
 		*it = "lu";
-		for (ft::vector<std::string>::iterator i = v.begin();
-				i != v.end(); ++i) {
-			std::cout << "out: " << *i << "." << std::endl;
+		for (int i = 0; i < 7; i++) {
+			std::cout << "out: " << w.at(i) << "." << std::endl;
 		}
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;

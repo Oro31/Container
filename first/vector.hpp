@@ -30,7 +30,10 @@ namespace ft {
 		public:
 			iterator	begin() {return buffer_start;};
 			iterator	end() {return current_end;};
+			const iterator	cbegin() const {return buffer_start;};
+			const iterator	cend() const {return current_end;};
 
+			vector() : buffer_start(0), current_end(0), end_of_buffer(0) {};
 			explicit vector(const allocator_type &alloc = allocator_type()) : buffer_start(0),
 				current_end(0), end_of_buffer(0) {};
 			explicit vector(size_type n, const value_type &val = value_type(),
@@ -57,9 +60,24 @@ namespace ft {
 				buffer_start = the_allocator.allocate(buf_size);
 				end_of_buffer = buffer_start + buf_size;
 				for (current_end = buffer_start; first != last; current_end++, first++) {
-					the_allocator.construct(current_end, *first);
+					the_allocator.construct(current_end.base(), *first);
 				}
 //				std::unique(begin(), end());
+			};
+			vector &operator=(const vector &other) {
+				iterator	first = other.cbegin();
+				size_t	buf_size = other.cend() - other.cbegin();
+				the_allocator = other.get_allocator();
+				buffer_start = the_allocator.allocate(buf_size);
+				end_of_buffer = buffer_start + buf_size;
+				for (current_end = buffer_start; first != other.cend(); current_end++, first++) {
+					the_allocator.construct(current_end.base(), *first);
+				}
+				return *this;
+//				vector<value_type> v(vector<iterator>(other.begin(), other.end()));
+			}
+			vector(const vector &other) {
+				*this = other;
 			};
 			~vector() {
 				for (iterator it = buffer_start; it != current_end; it++) {
@@ -67,9 +85,10 @@ namespace ft {
 				}
 				the_allocator.deallocate(buffer_start.base(), end_of_buffer.base() - buffer_start.base());
 			};
+			allocator_type get_allocator() const {return the_allocator;};
 			reference at(size_type pos) {
 				if ((buffer_start + pos).base() - current_end.base() >= 0) {
-					throw "out of range";
+					throw std::out_of_range("out of range");
 				}
 				return *(buffer_start + pos);
 			};
