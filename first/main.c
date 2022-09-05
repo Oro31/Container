@@ -4,9 +4,13 @@
 
 int	main(void) {
 	try {
+		ft::vector<std::string> t;
+		std::cout << "out: " << t.empty() << "." << std::endl;
+		std::cout << "out: " << t.max_size() << "." << std::endl;
 		ft::vector<std::string>	v(5);
 		std::cout << "out: " << v.capacity() << "." << std::endl;
 		std::cout << "out: " << v.size() << "." << std::endl;
+		std::cout << "out: " << v.empty() << "." << std::endl;
 		std::fill(v.begin(), v.end(), "yo");
 		ft::vector<std::string> u = v;
 		for (int i = 0; i < 5; i++) {

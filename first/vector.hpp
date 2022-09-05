@@ -34,7 +34,7 @@ namespace ft {
 //			const iterator	cbegin() const {return buffer_start;};
 //			const iterator	cend() const {return current_end;};
 
-			vector() : buffer_start(0), current_end(0), end_of_buffer(0) {};
+//			vector() : buffer_start(0), current_end(0), end_of_buffer(0) {};
 			explicit vector(const allocator_type &alloc = allocator_type()) :
 				buffer_start(0), current_end(0), end_of_buffer(0) {};
 			explicit vector(size_type n, const value_type &val = value_type(),
@@ -96,6 +96,15 @@ namespace ft {
 			};
 			size_type capacity() {return end_of_buffer - buffer_start;};
 			size_type size() {return current_end - buffer_start;};
+			bool empty() {return !(current_end - buffer_start);};
+			size_type max_size() {return the_allocator.max_size();};
+			void reserve(size_type new_cap) {if (new_cap <= this->capacity()) {return ;}
+				T	*p = the_allocator.allocate(new_cap);
+				p.buffer_start = buffer_start;
+				p.current_end = current_end;
+				p.end_of_buffer = end_of_buffer;
+
+					}
 	};
 
 }
