@@ -1,4 +1,5 @@
 #include <memory>
+#include <iostream>
 #include "VecIterator.hpp"
 
 namespace ft {
@@ -30,12 +31,12 @@ namespace ft {
 		public:
 			iterator	begin() {return buffer_start;};
 			iterator	end() {return current_end;};
-			const iterator	cbegin() const {return buffer_start;};
-			const iterator	cend() const {return current_end;};
+//			const iterator	cbegin() const {return buffer_start;};
+//			const iterator	cend() const {return current_end;};
 
 			vector() : buffer_start(0), current_end(0), end_of_buffer(0) {};
-			explicit vector(const allocator_type &alloc = allocator_type()) : buffer_start(0),
-				current_end(0), end_of_buffer(0) {};
+			explicit vector(const allocator_type &alloc = allocator_type()) :
+				buffer_start(0), current_end(0), end_of_buffer(0) {};
 			explicit vector(size_type n, const value_type &val = value_type(),
 					const allocator_type &alloc = allocator_type()) {
 				T	*p = the_allocator.allocate(n * 2);
@@ -60,23 +61,24 @@ namespace ft {
 				buffer_start = the_allocator.allocate(buf_size);
 				end_of_buffer = buffer_start + buf_size;
 				for (current_end = buffer_start; first != last; current_end++, first++) {
-					the_allocator.construct(current_end.base(), *first);
+					const_reference tmp = *first;
+					the_allocator.construct(current_end.base(), tmp);
 				}
 //				std::unique(begin(), end());
 			};
-			vector &operator=(const vector &other) {
-				iterator	first = other.cbegin();
-				size_t	buf_size = other.cend() - other.cbegin();
+			vector &operator=(vector &other) {
+				iterator	first = other.begin();
+				size_t	buf_size = other.end() - other.begin();
 				the_allocator = other.get_allocator();
 				buffer_start = the_allocator.allocate(buf_size);
 				end_of_buffer = buffer_start + buf_size;
-				for (current_end = buffer_start; first != other.cend(); current_end++, first++) {
+				for (current_end = buffer_start; first != other.end(); current_end++, first++) {
 					the_allocator.construct(current_end.base(), *first);
 				}
 				return *this;
 //				vector<value_type> v(vector<iterator>(other.begin(), other.end()));
 			}
-			vector(const vector &other) {
+			vector(vector &other) {
 				*this = other;
 			};
 			~vector() {
@@ -92,6 +94,8 @@ namespace ft {
 				}
 				return *(buffer_start + pos);
 			};
+			size_type capacity() {return end_of_buffer - buffer_start;};
+			size_type size() {return current_end - buffer_start;};
 	};
 
 }

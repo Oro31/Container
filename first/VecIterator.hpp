@@ -5,8 +5,8 @@ namespace ft {
 	class VecIterator {
 		public:
 			typedef T	value_type;
-			typedef T	*pointer;
-			typedef T	&reference;
+			typedef value_type	*pointer;
+			typedef value_type	&reference;
 			typedef std::ptrdiff_t	difference_type;
 			typedef std::random_access_iterator_tag	iterator_category;
 
@@ -17,8 +17,8 @@ namespace ft {
 			VecIterator(const VecIterator &mit) {*this = mit;};
 
 			reference operator*() {return *p;};
-//			const reference operator*() const {return *p;};
-			pointer operator->() {return p;};
+			const reference operator*() const {return *p;};
+//			pointer operator->() {return p;};
 //			const pointer operator->() const {return p;};
 			pointer base() {return p;};
 			const pointer base() const {return p;};
