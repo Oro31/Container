@@ -58,15 +58,15 @@ namespace ft {
 	};
 
 	template<class Iterator>
-	bool operator==(const Iterator &lhs, const Iterator &rhs) {return lhs.p==rhs.p;};
+		bool operator==(const Iterator &lhs, const Iterator &rhs) {return lhs.p==rhs.p;};
 	template<class Iterator>
-	bool operator!=(const Iterator &lhs, const Iterator &rhs) {return lhs.p!=rhs.p;};
+		bool operator!=(const Iterator &lhs, const Iterator &rhs) {return lhs.p!=rhs.p;};
 	template<class Iterator>
-	bool operator>(const Iterator &lhs, const Iterator &rhs) {return lhs.p>rhs.p;};
+		bool operator>(const Iterator &lhs, const Iterator &rhs) {return lhs.p>rhs.p;};
 	template<class Iterator>
-	bool operator>=(const Iterator &lhs, const Iterator &rhs) {return lhs.p>=rhs.p;};
+		bool operator>=(const Iterator &lhs, const Iterator &rhs) {return lhs.p>=rhs.p;};
 	template<class Iterator>
-	bool operator<(const Iterator &lhs, const Iterator &rhs) {return lhs.p<rhs.p;};
+		bool operator<(const Iterator &lhs, const Iterator &rhs) {return lhs.p<rhs.p;};
 	template<class Iterator>
-	bool operator<=(const Iterator &lhs, const Iterator &rhs) {return lhs.p<=rhs.p;};
+		bool operator<=(const Iterator &lhs, const Iterator &rhs) {return lhs.p<=rhs.p;};
 }
