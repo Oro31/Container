@@ -126,9 +126,8 @@ namespace ft {
 			size_type capacity() {return end_of_buffer - buffer_start;};
 			bool empty() {return !(current_end - buffer_start);};
 			void reserve(size_type new_cap) {
-				if (new_cap <= this->capacity()) {
-				}
-				T	*p = the_allocator.allocate(new_cap);
+				if (new_cap <= this->capacity()) {return ;}
+				T	*p = the_allocator.allocate(new_cap * 2);
 				p.buffer_start = buffer_start;
 				p.current_end = current_end;
 				p.end_of_buffer = end_of_buffer;
@@ -164,10 +163,10 @@ namespace ft {
 				return *(buffer_start);
 			};
 			reference	back() {
-				return *(current_end);
+				return *(current_end - 1);
 			};
 			const_reference	back() const {
-				return *(current_end);
+				return *(current_end - 1);
 			};
 
 			//
@@ -176,7 +175,9 @@ namespace ft {
 			
 			void	push_back(const T &x) {
 			};
-			void	push_back() {
+			void	pop_back() {
+				iterator	it = current_end - 1;
+				it->~value_type();
 			};
 			iterator	insert(iterator position, const T &x) {
 			};
@@ -184,8 +185,42 @@ namespace ft {
 				void	insert(iterator position, InputIt first, InputIt last) {
 			};
 			iterator	erase(iterator position) {
+				if (position < buffer_start || position >= current_end) {
+					return buffer_start;
+				}
+				iterator	it = buffer_start;
+				while (it != position) {it++;}
+				it->~value_type();
+				while (it != current_end) {
+					*it = *(it + 1);
+					it++;
+				}
+				current_end--;
+				return (position + 1);
 			};
-			iterator	rease(iterator first, iterator last) {
+			iterator	erase(iterator first, iterator last) {
+				if (last < buffer_start || first > current_end) {
+					return (current_end - 1);
+				}
+				iterator	it = buffer_start;
+				if (first >= buffer_start) {
+					while (it != first) {it++;}
+				}
+				size_type	n = 0;
+				//it == (first || b_start)
+				while (it != last && it != current_end) {
+					it->~value_type();
+					it++;
+					n++;
+				}
+				//it == (last || current_end)
+				while (it != current_end) {
+					*first = *it;
+					it++;
+					first++;
+				}
+				current_end = current_end - n;
+				return (first + n);
 			};
 			void	swap(vector<T, Allocator> &other) {
 				iterator	old_begin = buffer_start;
@@ -207,6 +242,7 @@ namespace ft {
 				it->~value_type();
 			};
 	};
+
 	template <class T, class Allocator>
 		bool	operator==(const vector<T, Allocator> &x,
 					const vector<T, Allocator> &y) {
