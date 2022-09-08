@@ -78,7 +78,7 @@ namespace ft {
 			//
 			vector &operator=(const vector<T, Allocator> &other) {
 				iterator	first = other.begin();
-				size_t	buf_size = other.end() - other.begin();
+				size_t	buf_size = other.capacity();
 				the_allocator = other.get_allocator();
 				buffer_start = the_allocator.allocate(buf_size);
 				end_of_buffer = buffer_start + buf_size;
@@ -90,9 +90,27 @@ namespace ft {
 			//
 			template<class InputIt>
 				void assign(InputIt first, InputIt last) {
+					if (last - first > this->capacity()) {this->reserve(last - first)}
+					for (iterator it = buffer_start; it != current_end; it++) {
+						it->~value_type();
+					}
+					current_end = buffer_start;
+					for (iterator it = first; it != last; it++) {
+						the_allocator.construct(current_end.base(), *it);
+						current_end++;
+					}
 				};
 			//
 			void assign(size_type n, const T &value) {
+				if (n > this->capacity()) {this->reserve(n)}
+				for (iterator it = buffer_start; it != current_end; it++) {
+					it->~value_type();
+				}
+				current_end = buffer_start;
+				for (size_type i = 0; i < n; i++) {
+					the_allocator.construct(current_end.base(), value);
+					current_end++;
+				}
 			};
 			//
 			allocator_type get_allocator() const {return the_allocator;};
@@ -120,17 +138,27 @@ namespace ft {
 				if (sz <= this->size()) {
 					for (size_type i = this->size(); i > sz; i--) {
 						current_end--;
+						current_end->~value_type();
+					}
+				} else {
+					if (sz > this->capacity()) {
+						this->reserve(sz);
 					}
 				}
 			};
 			size_type capacity() {return end_of_buffer - buffer_start;};
 			bool empty() {return !(current_end - buffer_start);};
 			void reserve(size_type new_cap) {
-				if (new_cap <= this->capacity()) {return ;}
-				T	*p = the_allocator.allocate(new_cap * 2);
-				p.buffer_start = buffer_start;
-				p.current_end = current_end;
-				p.end_of_buffer = end_of_buffer;
+				if (new_cap > this->capacity()) {
+					T	p(*this);
+					this->~vector();
+					buffer_start = the_allocator.allocate(new_cap * 2);
+					end_of_buffer = buffer_start + (new_cap * 2);
+					current_end = buffer_start;
+					for (iterator it = p.buffer_start; it != p.current_end; it++ current_end++) {
+						the_allocator.construct(current_end.base(), *it);
+					}
+				}
 			};
 
 
