@@ -18,12 +18,11 @@ namespace ft {
 
 			reference operator*() {return *p;};
 			const reference operator*() const {return *p;};
-//			pointer operator->() {return p;};
-//			const pointer operator->() const {return p;};
+			pointer operator->() {return p;};
+			const pointer operator->() const {return p;};
 			pointer base() {return p;};
 			const pointer base() const {return p;};
 
-//			value_type &operator=(const reference other) {*this = other; return *this;};
 
 			VecIterator &operator++() {++p; return *this;};
 			VecIterator &operator--() {--p; return *this;};

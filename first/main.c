@@ -5,6 +5,9 @@
 int	main(void) {
 	try {
 		ft::vector<std::string> t;
+		t.reserve(10);
+		std::cout << "out: " << t.capacity() << "." << std::endl;
+		std::cout << "out: " << t.size() << "." << std::endl;
 		std::cout << "out: " << t.empty() << "." << std::endl;
 		std::cout << "out: " << t.max_size() << "." << std::endl;
 		ft::vector<std::string>	v(5);
