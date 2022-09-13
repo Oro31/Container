@@ -160,13 +160,17 @@ namespace ft {
 			void reserve(size_type new_cap) {
 				if (new_cap > this->capacity()) {
 					vector<T, Allocator>	p(*this);
+					std::cout << p.size() << std::endl;
 					this->~vector();
 					buffer_start = the_allocator.allocate((this->capacity() + 1) * new_cap * 2);
 					end_of_buffer = buffer_start;
 					end_of_buffer += (new_cap * 2);
-					current_end = buffer_start;
-					for (iterator it = p.begin(); it != p.end(); it++, current_end++) {
-						the_allocator.construct(current_end.base(), *it);
+					if (p.size() > 0) {
+						current_end = buffer_start;
+						current_end += p.size();
+					}
+					for (iterator it = buffer_start; it != current_end; it++) {
+						the_allocator.construct(it.base(), *(p.buffer_start));
 					}
 				}
 			};

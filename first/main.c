@@ -93,7 +93,7 @@ int	main(void) {
 		//assignment operator overload
 		std::cout << "assignment operator overload" << std::endl;
 		ft::vector<std::string> u = v;
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < u.size(); i++) {
 			//at
 			std::cout << "at" << std::endl;
 			try {
@@ -102,22 +102,17 @@ int	main(void) {
 				std::cerr << e.what() << std::endl;
 			}
 		}
-		/*
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < u.size(); i++) {
 			//acces operator overload
 			std::cout << "acces operator overload" << std::endl;
 			std::cout << "out: " << u[i] << "." << std::endl;
 		}
 		std::cout << "fin" << std::endl;
+		//constructor with InputIt
 		ft::vector<std::string>	w(v.begin(), v.end());
 		for (int i = 0; i < 5; i++) {
 			std::cout << "out: " << w.at(i) << "." << std::endl;
 		}
-		ft::vector<std::string>::iterator it = v.begin();
-		*it = "lu";
-		for (int i = 0; i < 5; i++) {
-			std::cout << "out: " << w.at(i) << "." << std::endl;
-		}*/
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
