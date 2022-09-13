@@ -74,8 +74,8 @@ namespace ft {
 				for (iterator it = buffer_start; it != current_end; it++) {
 					the_allocator.destroy(it.base());
 				}
-				the_allocator.deallocate(buffer_start.base(),
-						end_of_buffer.base() - buffer_start.base());
+//				the_allocator.deallocate(buffer_start.base(),
+//						end_of_buffer.base() - buffer_start.base());
 			};
 			//
 			vector &operator=(const vector<T, Allocator> &other) {
@@ -142,7 +142,6 @@ namespace ft {
 				if (sz <= this->size()) {
 					for (size_type i = this->size(); i > sz; i--) {
 						current_end--;
-						current_end->~value_type();
 					}
 				} else {
 					if (sz > this->capacity()) {
@@ -163,7 +162,8 @@ namespace ft {
 					vector<T, Allocator>	p(*this);
 					this->~vector();
 					buffer_start = the_allocator.allocate((this->capacity() + 1) * new_cap * 2);
-					end_of_buffer = buffer_start + (new_cap * 2);
+					end_of_buffer = buffer_start;
+					end_of_buffer += (new_cap * 2);
 					current_end = buffer_start;
 					for (iterator it = p.begin(); it != p.end(); it++, current_end++) {
 						the_allocator.construct(current_end.base(), *it);
@@ -194,7 +194,7 @@ namespace ft {
 				if ((buffer_start + pos).base() - current_end.base() >= 0) {
 					throw std::out_of_range("out of range");
 				}
-				return *(buffer_start + pos);
+				return *(buffer_start + pos);;
 			};
 			//
 			reference	front() {
@@ -206,11 +206,15 @@ namespace ft {
 			};
 			//
 			reference	back() {
-				return *(current_end - 1);
+				iterator	tmp = current_end;
+				tmp--;
+				return *tmp;
 			};
 			//
 			const_reference	back() const {
-				return *(current_end - 1);
+				iterator	tmp = current_end;
+				tmp--;
+				return *tmp;
 			};
 
 			//
@@ -218,50 +222,55 @@ namespace ft {
 			//
 			
 			void	push_back(const T &x) {
-				if (this->size() == this->capacity) {this->reserve(1);}
+				if (this->size() == this->capacity()) {this->reserve(1);}
 				*current_end = x;
 				current_end++;
 			};
 			//
 			void	pop_back() {
 				current_end--;
-				*current_end->~value_type();
+				current_end->~value_type();
 			};
 			//
 			iterator	insert(iterator position, const T &x) {
 				size_type	pos = position - buffer_start;
-				T	p(*this);
-				if (this->size() == this->capacity) {this->reserve(1);}
-				(buffer_start + (pos - 1))->~value_type();
-				the_allocator.construct((buffer_start + (pos - 1)).base(), x);
+				vector<T, Allocator>	p(*this);
+				if (this->size() == this->capacity()) {this->reserve(1);}
 				current_end++;
-				for (iterator it = buffer_start + pos; it != current_end; it++) {
-					*it = *(p.buffer_start + (pos - 1));
-					p.buffer_start++;
+				iterator	tmp = buffer_start;
+				tmp += pos;
+				tmp->~value_type();
+				the_allocator.construct(tmp.base(), x);
+				iterator	tpmp = p.buffer_start;
+				tpmp += pos;
+				for (iterator it = ++tmp; it != current_end; it++) {
+					*it = *tpmp;
+					tpmp++;
 				}
-				return (buffer_start + (pos - 1));
+				tmp--;
+				return tmp;
 			};
 			//
 			template<class InputIt>
 				void	insert(iterator position, InputIt first, InputIt last) {
 					size_type	pos = position - buffer_start;
-					T	p(*this);
+					vector<T, Allocator>	p(*this);
 					if (this->size() + (last - first) >= this->capacity) {this->reserve(last - first);}
-					(buffer_start + (pos - 1))->~value_type();
-					p.buffer_start = p.buffer_start + ((position - buffer_start) - 1);
-					(buffer_start + (pos - 1))->~value_type();
-					size_type	i = 0;
-					while (first != last) {
-						*(buffer_start + (pos + (i - 1))) = *first;
-						i++;
+					current_end += last - first;
+					iterator	tmp = buffer_start;
+					tmp += pos;
+					for (iterator it = tmp; first != last; it++) {
+						it->~value_type();
+						the_allocator.construct(it.base(), *first);
 						first++;
 					}
-					current_end = current_end + (last - first);
-					size_type	r = p.size() - pos;
-					for (size_type j = 0; j < r; j++ ) {
-						*current_end = *(p.buffer_start + (pos + j));
-						position++;
+					iterator	tpmp = p.buffer_start;
+					tpmp += pos;
+					for (iterator it = ++tmp; it != current_end; it++) {
+						*it = *tpmp;
+						tpmp++;
 					}
+					tmp--;
 				};
 			//
 			iterator	erase(iterator position) {

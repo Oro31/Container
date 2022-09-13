@@ -12,8 +12,10 @@ namespace ft {
 
 			VecIterator() : p(0) {};
 			explicit VecIterator(pointer x) : p(x) {};
+			~VecIterator() {};
 
 			VecIterator &operator=(const pointer it) {p = it; return *this;};
+			VecIterator &operator=(const VecIterator &mit) {p = mit.p; return *this;};
 			VecIterator(const VecIterator &mit) {*this = mit;};
 
 			reference operator*() {return *p;};
@@ -24,14 +26,14 @@ namespace ft {
 			const pointer base() const {return p;};
 
 
-			VecIterator &operator++() {++p; return *this;};
-			VecIterator &operator--() {--p; return *this;};
-			VecIterator operator++(int) {VecIterator tmp(*this); operator++(); return tmp;};
-			VecIterator operator--(int) {VecIterator tmp(*this); operator--(); return tmp;};
+			VecIterator &operator++() {p++; return *this;};
+			VecIterator &operator--() {p--; return *this;};
+			VecIterator operator++(int) {VecIterator tmp(*this); p++; return tmp;};
+			VecIterator operator--(int) {VecIterator tmp(*this); p--; return tmp;};
 
 			VecIterator &operator+=(int n) {for (int i = 0; i < n; i++) {p++;} return *this;};
 			VecIterator &operator-=(int n) {for (int i = 0; i < n; i++) {p--;} return *this;};
-			reference operator[](size_t n) {p += n; return *p;};
+			reference operator[](size_t n) {return *(p + n);};
 
 			VecIterator operator+(int n) const {VecIterator r(*this); r+=n; return r;};
 			VecIterator operator-(int n) const {VecIterator r(*this); r-=n; return r;};
