@@ -1,0 +1,104 @@
+ft
+default constructor
+ft::vector<std::string> t;
+out: t.capacity() = 0.
+out: t.size() = 0.
+out: t.empty() = 1.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+reserve
+t.reserve(10);
+out: t.front() = .
+out: t.back() = .
+out: t.capacity() = 20.
+out: t.size() = 0.
+out: t.empty() = 1.
+out: t.max_size() = 288230376151711743.
+assign
+t.assign(10, ''salut'');
+out: t.front() = salut.
+out: t.back() = salut.
+out: t.capacity() = 20.
+out: t.size() = 10.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+push back
+t.push_back(''bon dia'');
+out: t.front() = salut.
+out: t.back() = bon dia.
+out: t.capacity() = 20.
+out: t.size() = 11.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+pop back
+t.pop_back();
+out: t.front() = salut.
+out: t.back() = salut.
+out: t.capacity() = 20.
+out: t.size() = 10.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+insert
+t.insert((t.begin() + 2), ''guten tag'');
+out: t.at(0) = salut.
+out: t.at(1) = salut.
+out: t.at(2) = guten tag.
+out: t.at(3) = salut.
+out: t.front() = salut.
+out: t.back()  = salut.
+out: t.capacity() = 20.
+out: t.size() = 11.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+resize
+t.resize(3);
+out: t.front() = salut.
+out: t.back()  = guten tag.
+out: t.capacity() = 20.
+out: t.size() = 3.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+out: t.max_size() = 288230376151711743.
+default value and size n constructor
+ft::vector<std::string>	v(5);
+out: t.capacity() = 10.
+out: t.size() = 5.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+assign
+t.assign(t.begin(), t.end())
+out: t.capacity() = 10.
+out: t.size() = 3.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+assignment operator overload
+ft::vector<std::string> u = v;
+out: t.capacity() = 6.
+out: t.size() = 3.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+at
+u.at(i); (i < w.size())
+out: salut.
+out: salut.
+out: guten tag.
+acces operator overload
+u[i]; (i < u.size())
+out: salut.
+out: salut.
+out: guten tag.
+constructor with InputIt
+ft::vector<std::string>	w(v.begin(), v.end());
+out: t.capacity() = 6.
+out: t.size() = 3.
+out: t.empty() = 0.
+out: t.max_size() = 288230376151711743.
+w.at(i); (i < w.size())
+out: salut.
+out: salut.
+out: guten tag.
+fin
