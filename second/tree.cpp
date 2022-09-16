@@ -32,7 +32,6 @@ Node *newNode(int key) {
 void getMaxHeight(Node *root, int *h) {
 	if (!root) {return ;}
 	getMaxHeight(root->left, h);
-	std::cout << "gmh = " << *h << std::endl;
 	if (root->height > *h) {*h = root->height;}
 	getMaxHeight(root->right, h);
 }
@@ -43,60 +42,34 @@ Node *minValueNode(Node *node) {
 	return current;
 };
 
+Node *maxValueNode(Node *node) {
+	Node	*current = node;
+	while (current && current->right != NULL) {current = current->right;}
+	return current;
+};
+
 Node *getNextNode(Node *x) {
 	if (!x) {return NULL;}
 	Node	*tmp = x;
-	std::cout << "gnn " << tmp->key;
 	if (tmp->right) {
-		std::cout << "r\n";
 		return minValueNode(tmp->right);
 	}
 	if (tmp->parent && tmp == tmp->parent->left) {
-		std::cout << "p\n";
 		return tmp->parent;
 	}
 	if (!tmp->parent)
 		return NULL;
 	while (tmp->parent && tmp->parent->key < x->key) {
-		std::cout << "gp\n";
 		tmp = tmp->parent;
 	}
 	return tmp->parent;
 }
-/*	if (!tmp->parent && !tmp->right) {
-		std::cout << "last element" << std::endl;
-		return NULL;
-	}
-	if (!tmp->parent && tmp->right) {
-		std::cout << "no parent go minRight" << std::endl;
-		tmp = minValueNode(tmp->right);
-	} else if (tmp->parent && tmp->parent->right == tmp) {
-		std::cout << "parent is left" << std::endl;
-		tmp = minValueNode(tmp->right);
-	} else if (tmp->parent && tmp->parent->right && tmp->parent->right->left && tmp != tmp->parent->right) {
-		std::cout << "parent" << tmp->parent->key << "and parent->right" << tmp->parent->right->key << std::endl;
-		tmp = minValueNode(tmp->parent->right);
-		std::cout << "tmp is now = " << tmp->key;
-	} else if (tmp != tmp->parent->right){
-		std::cout << "parent is next" << std::endl;
-		tmp = tmp->parent;
-	} else {
-	}
-		tmp = tmp->parent;
-		std::cout << "parent gnn " << tmp->key;
-		if (tmp->right && tmp->right->left) {
-			std::cout << "right gnn " << tmp->key;
-			tmp = minValueNode(tmp->right);
-			std::cout << "right gnn " << tmp->key << std::endl;;
-		}*/
 
 Node *rightRotate(Node *y) {
-	std::cout << "rightrotate start" << std::endl;
 	Node	*x = y->left;
 	Node	*T2 = x->right;
 
 	x->right = y;
-//	T2->parent = y;
 	y->left = T2;
 	y->parent = x;
 	x->parent = NULL;
@@ -105,20 +78,16 @@ Node *rightRotate(Node *y) {
 			height(y->right)) + 1;
 	x->height = max(height(x->left),
 			height(x->right)) + 1;
-	std::cout << "rightrotate end" << std::endl;
 
 	return x;
 };
 
 Node *leftRotate(Node *x) {
-	std::cout << "leftrotate start" << std::endl;
 	Node	*y = x->right;
 	Node	*T2 = y->left;
 
 	y->left = x;
 	x->right = T2;
-//	T2->parent = x;
-	std::cout << "leftrotate middle" << std::endl;
 	x->parent = y;
 	y->parent = NULL;
 
@@ -126,7 +95,6 @@ Node *leftRotate(Node *x) {
 			height(x->right)) + 1;
 	y->height = max(height(y->left),
 			height(y->right)) + 1;
-	std::cout << "leftrotate end" << std::endl;
 
 	return y;
 };
@@ -136,10 +104,8 @@ int getBalance(Node *N) {
 	return height(N->left) - height(N->right);
 };
 
-
 Node *insertVal(Node *node, int key) {
 	if (!node) {return newNode(key);}
-	std::cout << "insert called, parent = " << node->parent << std::endl;
 	if (key < node->key) {
 		node->left = insertVal(node->left, key);
 	} else if (key > node->key) {
@@ -169,7 +135,7 @@ Node *insertVal(Node *node, int key) {
 
 void preOrder(Node *root) {
 	if (!root) {return;}
-	std::cout << root->key << " " << "parent = " << root->parent << std::endl;
+	std::cout << "preorder root->key = " << root->key << " " << std::endl;
 	preOrder(root->left);
 	preOrder(root->right);
 }
@@ -178,9 +144,7 @@ void preOrder(Node *root) {
 void inOrderTree(Node *root, int i) {
 	if (!root) {return;}
 	inOrderTree(root->left, i);
-	std::cout << "inorder root->key = " << root->key
-		<< "height = " << root->height
-		<< "parent = " << root->parent << std::endl;
+	std::cout << "inorder root->key = " << root->key << std::endl;
 	inOrderTree(root->right, i);
 };
 
@@ -225,6 +189,15 @@ Node *deleteNode(Node *root, int key) {
 	return root;
 }
 
+void searchNode(Node *root, Node **result, int key) {
+	if (!root) {return ;}
+	else if (root->key == key) {*result = root; return ;}
+	std::cout << "search...\n";
+	searchNode(root->left, result, key);
+//	std::cout << "search root->key = " << root->key << " " << std::endl;
+	searchNode(root->right, result, key);
+}
+
 int	main() {
 	int	tab[5];
 	int	mtab[5];
@@ -232,19 +205,29 @@ int	main() {
 	Node	*root = NULL;
 	for (int i = 0; i < 5; i++) {
 		root = insertVal(root, mtab[i]);
+		std::cout << "inserted " << mtab[i] << std::endl;
 		root = insertVal(root, tab[i]);
+		std::cout << "inserted " << tab[i] << std::endl;
 	}
-	std::cout << "end of loop " << std::endl;
+	std::cout << "/////////result//////////" << std::endl;
+
+	Node *search = NULL;
+	searchNode(root, &search, 5);
+	if (search)
+		std::cout << "root.search(2) = " << search->key << std::endl;
 	int mh = 0;
 	getMaxHeight(root, &mh) ;
 	std::cout << "max height = " << mh << std::endl;
-	Node	*next = minValueNode(root);
+	std::cout << "\n////////////max and min///////////" << std::endl;
+	Node	*next = maxValueNode(root);
+	std::cout << "max = " << next->key << std::endl;
+	next = minValueNode(root);
+	std::cout << "min = " << next->key << std::endl;
+	std::cout << "\n////////////++ope///////////" << std::endl;
 	while (next) {std::cout << "++" << next->key << std::endl;next = getNextNode(next);}
-//	preOrder(root);
-//	root = deleteNode(root, 1);
-//	std::cout << "\nafter deleted 1" << std::endl;
+	std::cout << "\n////////////preorder///////////" << std::endl;
 	preOrder(root);
-	std::cout << "\n//////////////////************************//////////////////" << std::endl;
+	std::cout << "\n////////////inorder///////////" << std::endl;
 	inOrderTree(root, 0);
 	return 0;
 }
