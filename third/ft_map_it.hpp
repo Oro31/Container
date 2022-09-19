@@ -3,15 +3,12 @@
 #include <memory>
 
 namespace ft {
-	template <
-		class Key,
-			  class T,
+	template <class Key, class T>
 //			  class Compare = std::less<Key>,
 //			  class Allocator = std::allocator<std::pair<const Key, T>>
-		>
 		class MapIt {
 			public:
-				typedef pair<const Key, T>						value_type;
+				typedef std::pair<Key, T>						value_type;
 				typedef value_type								*pointer;
 				typedef value_type								&reference;
 				typedef std::ptrdiff_t							difference_type;
@@ -19,46 +16,58 @@ namespace ft {
 
 			private:
 				struct Node {
-					value_type		*pair;
+					value_type		pair;
 					int				height;
 					struct Node		*parent;
 					struct Node		*left;
 					struct Node		*right;
 
-					Node(value_type &pr) : pair(pr), height(1), parent(0), left(0), right(0) {}
+					Node(value_type pr) {
+						pair = pr;
+						height = 1;
+						parent = NULL;
+						left = NULL;
+						right = NULL;
+					};
 				};
 
 				Node	*_root;
 
 			public:
 
-				MapIt() : {_root = NULL;};
-				explicit MapIt(value_type &pair) : {_root = insertVal(_root, pair);};
+				MapIt() {_root = NULL;};
+				MapIt(value_type pair) {_root = newNode(pair);};
 				~MapIt() {};
 
+				MapIt(Node *result) {_root = result;};
+
+				/*
 				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
 				MapIt &operator=(const MapIt &it) {root->pair = it._root->pair; return *this;};
 				MapIt(const MapIt &it) {*this = it;};
 
+				*/
 				reference operator*() {return *(_root->pair);};
-				pointer operator->() {return _root->pair;};
+				pointer operator->() {return &(_root->pair);};
 				const pointer operator->() const {return _root->pair;};
 				pointer base() {return _root;};
 				const pointer base() const {return _root;};
 
 				MapIt &operator++() {_root = getNextNode(_root); return *this;};
-				//MapIt &operator--() {_root = getPrevNode(_root); return *this;};
+				MapIt &operator--() {_root = getPrevNode(_root); return *this;};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;};
+				/*
 //				MapIt operator--(int) {MapIt tmp(*this); operator--(); return tmp;};
 				
 				MapIt &operator+=(int n) {for (int i = 0; i < n; i++) {operator++();} return *this;};
 //				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
-//				reference operator[](size_t n) {return *(this + n);};
-
+				*/
+				T &operator[](Key k) {return this->find(k)->second;};
+/*
 				MapIt() operator+(int n) const {MapIt r(*this); r+=n; return r;};
 				MapIt() operator-(int n) const {MapIt r(*this); r-=n; return r;};
 
-
+*/
 				int max(int a, int b) {
 					return (a > b) ? a : b;
 				};
@@ -97,6 +106,26 @@ namespace ft {
 					return current;
 				};
 
+				Node *getPrevNode(Node *node) {
+					if (!node) {return NULL;}
+					Node	*tmp = node;
+					if (tmp->left) {
+						std::cout << "tmp->left\n";
+						return maxValueNode(tmp->left);
+					}
+					if (tmp->parent && tmp == tmp->parent->right) {
+						std::cout << "tmp is right from is parent\n";
+						return tmp->parent;
+					}
+					if (!tmp->parent)
+						return NULL;
+					while (tmp->parent && tmp->parent->pair.first < node->pair.first) {
+						tmp = tmp->parent;
+					}
+					if (tmp->parent->pair.first > tmp->pair.first) {return NULL;}
+					return tmp->parent;
+				};
+
 				Node *getNextNode(Node *node) {
 					if (!node) {return NULL;}
 					Node	*tmp = node;
@@ -108,7 +137,7 @@ namespace ft {
 					}
 					if (!tmp->parent)
 						return NULL;
-					while (tmp->parent && tmp->parent->pair->first < node->pair->first) {
+					while (tmp->parent && tmp->parent->pair.first < node->pair.first) {
 						tmp = tmp->parent;
 					}
 					return tmp->parent;
@@ -153,11 +182,11 @@ namespace ft {
 					return height(node->left) - height(node->right);
 				};
 
-				Node *insertVal(Node *node, value_type &pair) {
+				Node *insertVal(Node *node, value_type pair) {
 					if (!node) {return newNode(pair);}
-					if (pair.first < node->pair->first) {
+					if (pair.first < node->pair.first) {
 						node->left = insertVal(node->left, pair);
-					} else if (pair.first > node->pair->first) {
+					} else if (pair.first > node->pair.first) {
 						node->right = insertVal(node->right, pair);
 					} else {return node;}
 
@@ -166,13 +195,13 @@ namespace ft {
 
 					int	balance = getBalance(node);
 
-					if (balance > 1 && pair.first < node->left->pair->first) {return rightRotate(node);}
-					if (balance < -1 && pair.first > node->right->pair->first) {return leftRotate(node);}
-					if (balance > 1 && pair.first > node->left->pair->first) {
+					if (balance > 1 && pair.first < node->left->pair.first) {return rightRotate(node);}
+					if (balance < -1 && pair.first > node->right->pair.first) {return leftRotate(node);}
+					if (balance > 1 && pair.first > node->left->pair.first) {
 						node->left = leftRotate(node->left);
 						return rightRotate(node);
 					}
-					if (balance < -1 && pair.first < node->right->pair->first) {
+					if (balance < -1 && pair.first < node->right->pair.first) {
 						node->right = rightRotate(node->right);
 						return leftRotate(node);
 					}
@@ -185,17 +214,17 @@ namespace ft {
 				void inOrderTree(Node *root) {
 					if (!root) {return;}
 					inOrderTree(root->left);
-					std::cout << "inorder root->key = " << root->pair->first << std::endl;
+					std::cout << "inorder root->key = " << root->pair.first << std::endl;
 					inOrderTree(root->right);
 				};
 
 
-				Node *deleteNode(Node *root, value_type &pair) {
+				Node *deleteNode(Node *root, Key k) {
 					if (!root) {return root;}
-					if (pair.first < root->pair->first) {
-						root->left = deleteNode(root->left, pair);
-					} else if (pair.first > root->pair->first) {
-						root->right = deleteNode(root->right, pair.first);
+					if (k < root->pair.first) {
+						root->left = deleteNode(root->left, k);
+					} else if (k > root->pair.first) {
+						root->right = deleteNode(root->right, k);
 					} else {
 						if (!root->left || !root->right) {
 							Node	*tmp = root->left ? root->left : root->right;
@@ -209,7 +238,7 @@ namespace ft {
 						} else {
 							Node	*tmp = minValueNode(root->right);
 							root->pair = tmp->pair;
-							root->right = deleteNode(root->right, tmp->pair->first);
+							root->right = deleteNode(root->right, tmp->pair.first);
 						}
 					}
 					if (!root) {return root;}
@@ -230,11 +259,20 @@ namespace ft {
 					return root;
 				};
 
-				void searchNode(Node *root, Node **result, value_type &pair) {
+				void searchNode(Node *root, Node **result, Key k) {
 					if (!root) {return ;}
-					else if (root->pair->first == pair.first) {*result = root; return ;}
-					searchNode(root->left, result, pair.first);
-					searchNode(root->right, result, pair.first);
+					else if (root->pair.first == k) {*result = root; return ;}
+					searchNode(root->left, result, k);
+					searchNode(root->right, result, k);
 				};
-		}
+///////////////////////////************************////////////////////////////////
+				void insert(value_type pr) {_root = insertVal(_root, pr);};
+				void print() {this->inOrderTree(_root);};
+				void erase(Key k) {_root = deleteNode(_root, k);};
+				MapIt find(Key k) {
+					Node *result = NULL;
+					searchNode(_root, &result, k);
+					return MapIt(result);
+				};
+		};
 }
