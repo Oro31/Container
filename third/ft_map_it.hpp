@@ -24,6 +24,8 @@ namespace ft {
 					struct Node		*parent;
 					struct Node		*left;
 					struct Node		*right;
+
+					Node(value_type &pr) : pair(pr), height(1), parent(0), left(0), right(0) {}
 				};
 
 				Node	*_root;
@@ -50,7 +52,7 @@ namespace ft {
 //				MapIt operator--(int) {MapIt tmp(*this); operator--(); return tmp;};
 				
 				MapIt &operator+=(int n) {for (int i = 0; i < n; i++) {operator++();} return *this;};
-				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
+//				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
 //				reference operator[](size_t n) {return *(this + n);};
 
 				MapIt() operator+(int n) const {MapIt r(*this); r+=n; return r;};
@@ -64,36 +66,36 @@ namespace ft {
 				int height(Node *node) {
 					if (!node) {return 0;}
 					return node->height;
-				}
+				};
 
 				Node *newNode(value_type &pair) {
-					Node	*tmp = (Node *) malloc(sizeof(Node));
-					tmp->height = 1;
-					tmp->pair = pair;
-					tmp->left = NULL;
-					tmp->right = NULL;
-					tmp->parent = NULL;
-					return tmp;
-				}
+//					Node	*tmp = (Node *) malloc(sizeof(Node));
+//					tmp->height = 1;
+//					tmp->pair = pair;
+//					tmp->left = NULL;
+//					tmp->right = NULL;
+//					tmp->parent = NULL;
+					return new Node(pair);
+				};
 
 				void getMaxHeight(Node *root, int *height) {
 					if (!root) {return ;}
 					getMaxHeight(root->left, height);
 					if (root->height > *height) {*height = root->height;}
 					getMaxHeight(root->right, height);
-				}
+				};
 
 				Node *minValueNode(Node *node) {
 					Node	*current = node;
 					while (current && current->left != NULL) {current = current->left;}
 					return current;
-				}
+				};
 
 				Node *maxValueNode(Node *node) {
 					Node	*current = node;
 					while (current && current->right != NULL) {current = current->right;}
 					return current;
-				}
+				};
 
 				Node *getNextNode(Node *node) {
 					if (!node) {return NULL;}
@@ -110,7 +112,7 @@ namespace ft {
 						tmp = tmp->parent;
 					}
 					return tmp->parent;
-				}
+				};
 
 				Node *rightRotate(Node *y) {
 					Node	*x = y->left;
@@ -127,7 +129,7 @@ namespace ft {
 							height(x->right)) + 1;
 
 					return x;
-				}
+				};
 
 				Node *leftRotate(Node *x) {
 					Node	*y = x->right;
@@ -144,12 +146,12 @@ namespace ft {
 							height(y->right)) + 1;
 
 					return y;
-				}
+				};
 
 				int getBalance(Node *node) {
 					if (!node) {return 0;}
 					return height(node->left) - height(node->right);
-				}
+				};
 
 				Node *insertVal(Node *node, value_type &pair) {
 					if (!node) {return newNode(pair);}
@@ -178,7 +180,7 @@ namespace ft {
 					if (node->right) {node->right->parent = node;}
 
 					return node;
-				}
+				};
 
 				void inOrderTree(Node *root) {
 					if (!root) {return;}
@@ -226,13 +228,13 @@ namespace ft {
 						return leftRotate(root);
 					}
 					return root;
-				}
+				};
 
 				void searchNode(Node *root, Node **result, value_type &pair) {
 					if (!root) {return ;}
 					else if (root->pair->first == pair.first) {*result = root; return ;}
 					searchNode(root->left, result, pair.first);
 					searchNode(root->right, result, pair.first);
-				}
+				};
 		}
 }
