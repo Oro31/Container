@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include "ft_map_it.hpp"
 
 namespace ft {
 	template <
@@ -12,19 +13,19 @@ namespace ft {
 		public:
 			typedef Key											key_type;
 			typedef T											mapped_type;
-			typedef pair<const Key, T>							value_type;
+			typedef std::pair<const Key, T>						value_type;
 			typedef Compare										key_compare;
 			typedef Allocator									allocator_type;
 			typedef typename Allocator::reference				reference;
 			typedef typename Allocator::const_reference			const_reference;
-			typedef MapIterator<Key, T>							iterator;
-			typedef const MapIterator<Key, T>					const_iterator;
+			typedef ft::MapIt<Key, T>								iterator;
+			typedef const ft::MapIt<Key, T>							const_iterator;
 			typedef std::size_t									size_type;
 			typedef std::ptrdiff_t								difference_type;
 			typedef typename Allocator::pointer					pointer;
 			typedef typename Allocator::const_pointer			const_pointer;
 			typedef std::reverse_iterator<iterator>				reverse_iterator;
-			typedef std::const_reverse_iterator<iterator>		const_reverse_iterator;
+			typedef std::reverse_iterator<const_iterator>		const_reverse_iterator;
 
 		private:
 			iterator	_itAlone;
@@ -51,43 +52,54 @@ namespace ft {
 
 	public:
 		explicit map(const Compare& comp = Compare(),
-				const Allocator& = Allocator()) : _itAlone(0) {};
+				const Allocator& = Allocator()) : _itAlone(0), _size(0) {};
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last,
 					const Compare& comp = Compare(), const Allocator& = Allocator()) {
 				_size = 0;
-				for (iterator it = first; it != last; it++) {
+				for (iterator it = first; it.base() != last.base(); it++) {
 					_size++; //if it->_root->_pair doesn't belong to this
-					_itAlone.insertVal(_itAlone.base(), it->_root->pair);
+					_itAlone.insert(std::make_pair(it->first, it->second));
 				}
 			};
+		/*
 		map(const map<Key,T,Compare,Allocator>& other) {
 			*this = other;
 		};
-		~map();
+		~map() {};
 		map<Key,T,Compare,Allocator> &operator=(const map<Key,T,Compare,Allocator>& other) {
 			_size = other._size;
 			_itAlone = other._itAlone;
 			return *this;
 		};
 		// iterators:
-		iterator begin() {return _itAlone.minValueNode(&(_itAlone._root));};
-		const_iterator begin() const {return _itAlone.minValueNode(&(_itAlone._root));};
-		iterator end() {return _itAlone.maxValueNode(&(_itAlone._root));};
-		const_iterator end() const {return _itAlone.maxValueNode(&(_itAlone._root));};
-		reverse_iterator rbegin() {return _itAlone.maxValueNode(&(_itAlone._root));};
-		const_reverse_iterator rbegin() const {return _itAlone.maxValueNode(&(_itAlone._root));};
-		reverse_iterator rend() {return _itAlone.minValueNode(&(_itAlone._root));};
-		const_reverse_iterator rend() const {return _itAlone.minValueNode(&(_itAlone._root));};
+		*/
+		iterator begin() {return _itAlone.minValueNode(_itAlone.base());};
+//		const_iterator begin() const {return _itAlone.minValueNode(&(_itAlone._root));};
+		iterator end() {return _itAlone.maxValueNode(_itAlone.base());};
+//		const_iterator end() const {return _itAlone.maxValueNode(&(_itAlone._root));};
+//		reverse_iterator rbegin() {return _itAlone.maxValueNode(&(_itAlone._root));};
+//		const_reverse_iterator rbegin() const {return _itAlone.maxValueNode(&(_itAlone._root));};
+//		reverse_iterator rend() {return _itAlone.minValueNode(&(_itAlone._root));};
+//		const_reverse_iterator rend() const {return _itAlone.minValueNode(&(_itAlone._root));};
 		// capacity:
-		bool empty() const {return _size > 0;};
+		
+		bool empty() const {return _size == 0;};
 		size_type size() const {return _size;};
 		size_type max_size() const {return _alloc.max_size();};
 		// 23.3.1.2 element access:
-		T& operator[](const key_type &x) {return insert(std::make_pair(key, T())).first->second;};
+		T& operator[](const key_type &x) {return _itAlone[x];};
 		// modifiers:
-		pair<iterator, bool> insert(const value_type& x) {Node *result = NULL;
-			searchNode(_root, &result, x); if (!result) {_root = insertVal(_root, x); searchNode(_root, &result, x.first)} return result.key;};
+		/*
+		pair<iterator, bool> insert(const value_type& x) {
+			Node *result = NULL;
+			searchNode(_root, &result, x);
+			if (!result) {
+				_root = insertVal(_root, x);
+				searchNode(_root, &result, x.first)
+			}
+			return result.key;
+		};
 		iterator insert(iterator position, const value_type& x);
 		template <class InputIterator>
 			void insert(InputIterator first, InputIterator last);
@@ -136,4 +148,7 @@ template <class Key, class T, class Compare, class Allocator>
 void swap(map<Key,T,Compare,Allocator>& x,
 		map<Key,T,Compare,Allocator>& y);
 
+}
+*/
+	};
 }

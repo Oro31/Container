@@ -41,17 +41,15 @@ namespace ft {
 
 				MapIt(Node *result) {_root = result;};
 
-				/*
-				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
-				MapIt &operator=(const MapIt &it) {root->pair = it._root->pair; return *this;};
+//				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
+				MapIt &operator=(const MapIt &it) {_root = it._root; return *this;};
 				MapIt(const MapIt &it) {*this = it;};
 
-				*/
 				reference operator*() {return *(_root->pair);};
 				pointer operator->() {return &(_root->pair);};
 				const pointer operator->() const {return _root->pair;};
-				pointer base() {return _root;};
-				const pointer base() const {return _root;};
+				Node *base() {return _root;};
+				const Node *base() const {return _root;};
 
 				MapIt &operator++() {_root = getNextNode(_root); return *this;};
 				MapIt &operator--() {_root = getPrevNode(_root); return *this;};
