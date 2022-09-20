@@ -12,47 +12,17 @@ int main() {
 	ft::MapIt<int, char>	end = bestHeight.find(6);
 	std::cout << begin->second << end->second;
 	std::cout << "let's create a map" << std::endl;
-//	for (ft::MapIt<int, char> it = begin)
-	ft::map<int, char>	testMap(begin, end);
+//	ft::map<int, char>	testMap(begin, end);
+	ft::map<int, char>	testMap;
+	testMap.insert(begin, end);
 	std::cout << testMap.begin()->second << std::endl;
 	std::cout << testMap.end()->second << std::endl;
 	std::cout << testMap.empty() << std::endl;
 	std::cout << testMap.size() << std::endl;
 	std::cout << testMap.max_size() << std::endl;
-	std::cout << testMap[3] << std::endl;
-	/*
+	ft::MapIt<int, char>	res = bestHeight.find(3);
 	std::cout << res->second << std::endl;
-	++res;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	res++;
-	std::cout << res->second << std::endl;
-	std::cout << "[4] = " << bestHeight[4] << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	--res;
-	std::cout << res->second << std::endl;
-	*/
+	std::cout << testMap.erase(9) << std::endl;
+//	std::cout << testMap[3] << std::endl;
 	return 0;
 }

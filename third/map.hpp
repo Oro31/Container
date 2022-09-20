@@ -90,21 +90,31 @@ namespace ft {
 		// 23.3.1.2 element access:
 		T& operator[](const key_type &x) {return _itAlone[x];};
 		// modifiers:
-		/*
-		pair<iterator, bool> insert(const value_type& x) {
-			Node *result = NULL;
-			searchNode(_root, &result, x);
-			if (!result) {
-				_root = insertVal(_root, x);
-				searchNode(_root, &result, x.first)
-			}
-			return result.key;
+		std::pair<iterator, bool> insert(const value_type &x) {
+			bool b = false;
+			iterator	res = _itAlone.find(x.first);
+			if (!(res.base())) {_itAlone.insert(x); b = true; _size++;}
+			return std::make_pair(_itAlone.find(x.first), b);
 		};
-		iterator insert(iterator position, const value_type& x);
+		iterator insert(iterator position, const value_type& x) {
+			return this->insert(x).first;
+		};
 		template <class InputIterator>
-			void insert(InputIterator first, InputIterator last);
-		void erase(iterator position);
-		size_type erase(const key_type& x);
+			void insert(InputIterator first, InputIterator last) {
+				for (iterator it = first; it->first != last->first; it++) {
+					this->insert(it.base()->pair);
+				}
+			};
+		void erase(iterator position) {
+			_itAlone.erase(position->first);
+		};
+		size_type erase(const key_type& x) {
+			size_type	ret = 0;
+			iterator	res = _itAlone.find(x);
+			if (res.base()) {_itAlone.erase(x); ret++;}
+			return ret;
+		};
+		/*
 		void erase(iterator first, iterator last);
 		void swap(map<Key,T,Compare,Allocator>&);
 		void clear();
