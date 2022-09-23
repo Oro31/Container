@@ -14,13 +14,13 @@ namespace ft {
 			public:
 				typedef Key										key_type;
 				typedef T										mapped_type;
-				typedef pair<const Key, T>						value_type;
+				typedef std::pair<const Key, T>					value_type;
 				typedef Compare									key_compare;
 				typedef Allocator								allocator_type;
 				typedef typename Allocator::reference			reference;
 				typedef typename Allocator::const_reference		const_reference;
-				typedef MapIterator<value_type>					iterator;
-				typedef const MapIterator<calue_type>			const_iterator;
+				typedef MapIt<key_type, T>				iterator;
+				typedef const MapIt<calue_type>			const_iterator;
 				typedef std::size_t								size_type;
 				typedef std::ptrdiff_t							difference_type;
 				typedef typename Allocator::pointer				pointer;
