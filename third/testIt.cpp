@@ -14,6 +14,18 @@ int main() {
 		it.print();
 	}
 	std::cout << "end loop\n";
+	testMap.insert(std::make_pair<int, char>(7, 'g'));
+	for (ft::map<int, char>::iterator it = testMap.begin(); it.base() != testMap.end().base(); it++) {
+		std::cout << "it = " << it->second << std::endl;
+		it.print();
+	}
+	testMap.insert(std::make_pair<int, char>(8, 'h'));
+	for (ft::map<int, char>::iterator it = testMap.begin(); it.base() != testMap.end().base(); it++) {
+		std::cout << "it = " << it->second << std::endl;
+		it.print();
+	}
+	testMap.insert(std::make_pair<int, char>(9, 'i'));
+	testMap.print();
 //	std::cout << bestHeight.find(bestHeight.minValueKey(bestHeight.base()))->second << std::endl;
 //	std::cout << testMap.begin()->second << std::endl;
 //	ft::map<int, char>::iterator last = testMap.end();

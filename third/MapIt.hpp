@@ -31,6 +31,7 @@ namespace ft {
 						left = NULL;
 						right = NULL;
 					};
+
 					Node(value_type pr) {
 						end = false;
 						pair = pr;
@@ -321,7 +322,14 @@ namespace ft {
 					return current->pair.first;
 				};
 ///////////////////////////************************////////////////////////////////
-				void insert(value_type pr) {_root = insertVal(_root, pr);};
+				void insert(value_type pr) {
+					_root = insertVal(_root, pr);
+				};
+				void delEnd() {
+					Node *tmp = this->maxValueNode(_root);
+					if (tmp->right && tmp->right->end)
+						tmp->right = NULL;
+				}
 				MapIt getEnd() {
 					Node *tmp = this->maxValueNode(_root);
 					std::cout << "new end = " << tmp->right << " :: " << tmp << std::endl;
@@ -329,14 +337,8 @@ namespace ft {
 						return MapIt(tmp->right);
 					Node *end = new Node();
 					end->end = true;
-					std::cout << "new end = " << tmp << " :: " << end << std::endl;
 					tmp->right = end;
-					std::cout << "new end = " << tmp << " :: " << end << std::endl;
 					end->parent = tmp;
-					std::cout << "getEnd before return: "
-						<< end->parent << "left = "
-						<< end->left << "right = "
-						<< end->right << std::endl;
 					return MapIt(end);
 				};
 				void print() {this->inOrderTree(_root);};

@@ -29,7 +29,6 @@ namespace ft {
 
 		private:
 			iterator	_root;
-			iterator	_end;
 			size_type	_size;
 			Allocator	_alloc; // use it to construct and deallocate
 //			Node		*_root;
@@ -87,6 +86,7 @@ namespace ft {
 //		const_reverse_iterator rend() const {return _root.minValueNode(&(_root._root));};
 		// capacity:
 		
+		void print() {_root.print();}
 		bool empty() const {return _size == 0;};
 		size_type size() const {return _size;};
 		size_type max_size() const {return _alloc.max_size();};
@@ -96,7 +96,7 @@ namespace ft {
 		std::pair<iterator, bool> insert(const value_type &x) {
 			bool b = false;
 			iterator	res = _root.find(x.first);
-			if (!(res.base())) {_root.insert(x); b = true; _size++;}
+			if (!(res.base())) {_root.delEnd(); _root.insert(x); b = true; _size++;}
 			return std::make_pair(_root.find(x.first), b);
 		};
 		iterator insert(iterator position, const value_type& x) {
