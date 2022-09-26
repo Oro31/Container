@@ -58,28 +58,30 @@ namespace ft {
 					const Compare& comp = Compare(), const Allocator& = Allocator()) {
 				_size = 0;
 				for (iterator it = first; it.base() != last.base(); it++) {
-					std::cout << "loop it\n";
 					_size++; //if it->_root->_pair doesn't belong to this
 					_root.insert(it.base()->pair);
 				}
 			};
-		/*
-		map(const map<Key,T,Compare,Allocator>& other) {
+		map(map<Key,T,Compare,Allocator>& other) {
 			*this = other;
 		};
-		~map() {};
-		map<Key,T,Compare,Allocator> &operator=(const map<Key,T,Compare,Allocator>& other) {
-			_size = other._size;
-			_root = other._root;
+		/*
+		~map() {
+			for (iterator it = this->begin(); it->first != this->end()->first; it++) {
+				it->~value_type();
+			}
+		};
+		*/
+		map<Key,T,Compare,Allocator> &operator=(map<Key,T,Compare,Allocator>& other) {
+			this->insert(other.begin(), other.end());
 			return *this;
 		};
 		// iterators:
-		*/
 //		iterator begin() {return _root.find(_root.minValueNode(_root.base())->pair.first);};
 		iterator begin() {return _root.find(_root.minValueKey(_root.base()));};
-//		const_iterator begin() const {return _root.minValueNode(&(_root._root));};
+//		const_iterator begin() const {return _root.find(_root.minValueNode(_root.base()));};
 		iterator end() {return _root.getEnd();};
-//		const_iterator end() const {return _root.maxValueNode(&(_root._root));};
+//		const_iterator end() const {return _root.getEnd();};
 //		reverse_iterator rbegin() {return _root.maxValueNode(&(_root._root));};
 //		const_reverse_iterator rbegin() const {return _root.maxValueNode(&(_root._root));};
 //		reverse_iterator rend() {return _root.minValueNode(&(_root._root));};
@@ -91,7 +93,7 @@ namespace ft {
 		size_type size() const {return _size;};
 		size_type max_size() const {return _alloc.max_size();};
 		// 23.3.1.2 element access:
-		T& operator[](const key_type &x) {return _root[x];};
+		T& operator[](const key_type &x) {return _root.find(x)->first;};
 		// modifiers:
 		std::pair<iterator, bool> insert(const value_type &x) {
 			bool b = false;
@@ -133,19 +135,32 @@ namespace ft {
 		iterator find(const key_type& x) {
 			return _root.find(x);
 		};
-		/*
-		const_iterator find(const key_type& x) const;
-		size_type count(const key_type& x) const;
-		iterator lower_bound(const key_type& x);
-		const_iterator lower_bound(const key_type& x) const;
-		iterator upper_bound(const key_type& x);
-		const_iterator upper_bound(const key_type& x) const;
+//		const_iterator find(const key_type& x) const;
+		size_type count(const key_type& x) {
+			return _root.find(x).base() != NULL;
+		};
+		iterator lower_bound(const key_type& x) {
+			iterator	ret = this->begin();
+			while (ret.base() != this->end().base() && ret->first < x)
+				ret++;
+			return ret;
+		};
+//		const_iterator lower_bound(const key_type& x) const;
+		iterator upper_bound(const key_type& x) {
+			iterator	ret = this->begin();
+			while (ret.base() != this->end().base() && ret->first <= x)
+				ret++;
+			return ret;
+		};
+//		const_iterator upper_bound(const key_type& x) const;
+		/*		
 		pair<iterator,iterator>
 		equal_range(const key_type& x);
 		pair<const_iterator,const_iterator>
 			equal_range(const key_type& x) const;
+		*/
 	};
-
+/*
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const map<Key,T,Compare,Allocator>& x,
 		const map<Key,T,Compare,Allocator>& y);
@@ -171,5 +186,4 @@ void swap(map<Key,T,Compare,Allocator>& x,
 
 }
 */
-	};
 }

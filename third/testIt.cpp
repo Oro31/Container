@@ -10,7 +10,7 @@ int main() {
 	bestHeight.print();
 	ft::map<int, char>	testMap(bestHeight.find(1), bestHeight.find(6));
 	for (ft::map<int, char>::iterator it = testMap.begin(); it.base() != testMap.end().base(); it++) {
-		std::cout << "it = " << it->second << std::endl;
+		std::cout << "it = " << it[it->first] << std::endl;
 		it.print();
 	}
 	std::cout << "end loop\n";

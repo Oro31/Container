@@ -52,13 +52,6 @@ namespace ft {
 
 				MapIt(Node *node) {
 					_root = node;
-/*					_root->pair = result.pair;
-					_root->height = result.height;
-					_root->parent = result.parent;
-					_root->left = result.left;
-					_root->right = result.right;
-					std::cout << "good\n";
-					*/
 				};
 
 //				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
@@ -83,18 +76,15 @@ namespace ft {
 				MapIt &operator++() {_root = getNextNode(_root); return *this;};
 				MapIt &operator--() {_root = getPrevNode(_root); return *this;};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;};
-				/*
-//				MapIt operator--(int) {MapIt tmp(*this); operator--(); return tmp;};
+				MapIt operator--(int) {MapIt tmp(*this); operator--(); return tmp;};
 				
 				MapIt &operator+=(int n) {for (int i = 0; i < n; i++) {operator++();} return *this;};
-//				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
-				*/
-				T &operator[](Key k) {return this->find(k)->second;};
-/*
-				MapIt() operator+(int n) const {MapIt r(*this); r+=n; return r;};
-				MapIt() operator-(int n) const {MapIt r(*this); r-=n; return r;};
+				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
 
-*/
+				T &operator[](Key k) {return this->find(k)->second;};
+				MapIt operator+(int n) const {MapIt r(*this); r+=n; return r;};
+				MapIt operator-(int n) const {MapIt r(*this); r-=n; return r;};
+
 				int max(int a, int b) {
 					return (a > b) ? a : b;
 				};
@@ -105,12 +95,6 @@ namespace ft {
 				};
 
 				Node *newNode(value_type &pair) {
-//					Node	*tmp = (Node *) malloc(sizeof(Node));
-//					tmp->height = 1;
-//					tmp->pair = pair;
-//					tmp->left = NULL;
-//					tmp->right = NULL;
-//					tmp->parent = NULL;
 					return new Node(pair);
 				};
 
@@ -284,23 +268,6 @@ namespace ft {
 					}
 					return root;
 				};
-
-//				MapIt	searchNode(Node *root/*, Node **result*/, Key k) {
-//					if (!root) {return NULL;}
-//					else if (root->pair.first == k) {
-//						*result = root;
-//						(*result)->pair = root->pair;
-//						(*result)->height = root->height;
-//						(*result)->parent = root->parent;
-//						(*result)->left = root->left;
-//						(*result)->right = root->right;
-//						std::cout << "find before return " << root->pair.second << std::endl;
-//						return MapIt(root);
-//					}
-//					searchNode(root->left/*, result*/, k);
-//					searchNode(root->right/*, result*/, k);
-//					return MapIt(root);
-//				};
 				void searchIt(MapIt *ret, Node *node, Key k) {
 					if (!node)
 						return ;
@@ -327,12 +294,13 @@ namespace ft {
 				};
 				void delEnd() {
 					Node *tmp = this->maxValueNode(_root);
-					if (tmp->right && tmp->right->end)
+					if (tmp && tmp->right && tmp->right->end) {
+						tmp->right->end = false;
 						tmp->right = NULL;
+					}
 				}
 				MapIt getEnd() {
 					Node *tmp = this->maxValueNode(_root);
-					std::cout << "new end = " << tmp->right << " :: " << tmp << std::endl;
 					if (tmp->right && tmp->right->end)
 						return MapIt(tmp->right);
 					Node *end = new Node();
@@ -347,11 +315,6 @@ namespace ft {
 					MapIt	ret;
 					searchIt(&ret, _root, k);
 					return ret;
-//					std::cout << "find = " << searchNode(_root, k)->second << std::endl;
-//					return searchNode(_root/*, &result*/, k);
-//					Node *result = NULL;
-//					searchNode(_root, &result, k);
-//					return MapIt(result);
 				};
 		};
 }
