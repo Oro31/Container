@@ -18,8 +18,8 @@ namespace ft {
 			typedef Allocator									allocator_type;
 			typedef typename Allocator::reference				reference;
 			typedef typename Allocator::const_reference			const_reference;
-			typedef ft::MapIt<Key, T>							iterator;
-			typedef const ft::MapIt<Key, T>						const_iterator;
+			typedef ft::MapIt<Key, T, Compare>							iterator;
+			typedef const ft::MapIt<Key, T, Compare>						const_iterator;
 			typedef std::size_t									size_type;
 			typedef std::ptrdiff_t								difference_type;
 			typedef typename Allocator::pointer					pointer;
@@ -56,8 +56,11 @@ namespace ft {
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last,
 					const Compare& comp = Compare(), const Allocator& = Allocator()) {
+				iterator tmpf(first);
+				iterator tmpl(last);
 				_size = 0;
-				for (iterator it = first; it.base() != last.base(); it++) {
+				for (iterator it = tmpf; it != tmpl; it++) {
+					std::cout << "it++\n";
 					_size++; //if it->_root->_pair doesn't belong to this
 					_root.insert(it.base()->pair);
 				}
@@ -106,7 +109,7 @@ namespace ft {
 		};
 		template <class InputIterator>
 			void insert(InputIterator first, InputIterator last) {
-				for (iterator it = first; it->first != last->first; it++) {
+				for (iterator it = first; it != last; it++) {
 					this->insert(it.base()->pair);
 				}
 			};
@@ -120,7 +123,7 @@ namespace ft {
 			return ret;
 		};
 		void erase(iterator first, iterator last) {
-			for (iterator it = first; it->first != last->first; it++) {
+			for (iterator it = first; it != last; it++) {
 				_root.erase(it->first);
 			}
 		};
@@ -141,14 +144,14 @@ namespace ft {
 		};
 		iterator lower_bound(const key_type& x) {
 			iterator	ret = this->begin();
-			while (ret.base() != this->end().base() && ret->first < x)
+			while (ret != this->end() && ret->first < x)
 				ret++;
 			return ret;
 		};
 //		const_iterator lower_bound(const key_type& x) const;
 		iterator upper_bound(const key_type& x) {
 			iterator	ret = this->begin();
-			while (ret.base() != this->end().base() && ret->first <= x)
+			while (ret != this->end() && ret->first <= x)
 				ret++;
 			return ret;
 		};

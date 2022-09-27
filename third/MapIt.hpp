@@ -3,9 +3,10 @@
 #include <memory>
 
 namespace ft {
-	template <class Key, class T>
-//			  class Compare = std::less<Key>,
-//			  class Allocator = std::allocator<std::pair<const Key, T>>
+	template <class Key, class T,
+			  class Compare = std::less<Key>>/*,
+			  class Allocator = std::allocator<std::pair<const Key, T>
+				>*/
 		class MapIt {
 			public:
 				typedef std::pair<Key, T>						value_type;
@@ -43,12 +44,15 @@ namespace ft {
 				};
 
 				Node	*_root;
+//				Compare	_comp;
 
 			public:
 
 				MapIt() {_root = NULL;};
 				MapIt(value_type pair) {_root = newNode(pair);};
 				~MapIt() {};
+				template<class Iterator>
+				MapIt(const Iterator &it) {*this = it;};
 
 				MapIt(Node *node) {
 					_root = node;
@@ -67,7 +71,7 @@ namespace ft {
 				};
 				MapIt(const MapIt &it) {*this = it;};
 
-				reference operator*() {return *(_root->pair);};
+				reference operator*() {return _root->pair;};
 				pointer operator->() {return &(_root->pair);};
 				const pointer operator->() const {return _root->pair;};
 				Node *base() {return _root;};
@@ -301,12 +305,14 @@ namespace ft {
 				}
 				MapIt getEnd() {
 					Node *tmp = this->maxValueNode(_root);
+					std::cout << "max = " << tmp << std::endl;
 					if (tmp->right && tmp->right->end)
 						return MapIt(tmp->right);
 					Node *end = new Node();
 					end->end = true;
 					tmp->right = end;
 					end->parent = tmp;
+					std::cout << "return = " << end << std::endl;
 					return MapIt(end);
 				};
 				void print() {this->inOrderTree(_root);};
@@ -316,5 +322,42 @@ namespace ft {
 					searchIt(&ret, _root, k);
 					return ret;
 				};
+				template<class Iterator>
+					friend bool operator!=(const Iterator &lhs, const Iterator &rhs);
+				template<class Iterator>
+					friend bool operator==(const Iterator &lhs, const Iterator &rhs);
+				template<class Iterator>
+					friend bool operator>(const Iterator &lhs, const Iterator &rhs);
+				template<class Iterator>
+					friend bool operator>=(const Iterator &lhs, const Iterator &rhs);
+				template<class Iterator>
+					friend bool operator<(const Iterator &lhs, const Iterator &rhs);
+				template<class Iterator>
+					friend bool operator<=(const Iterator &lhs, const Iterator &rhs);
 		};
+			template<class Iterator>
+				bool operator!=(const Iterator &lhs, const Iterator &rhs) {
+//					std::cout << lhs.base() << "!= " << rhs.base();
+					return lhs.base()->pair.first != rhs.base()->pair.first; //lhs != rhs;
+				}
+			template<class Iterator>
+				bool operator<(const Iterator &lhs, const Iterator &rhs) {
+					return lhs.base()->pair.first < rhs.base()->pair.first;
+				}
+			template<class Iterator>
+				bool operator==(const Iterator &lhs, const Iterator &rhs) {
+					return lhs == rhs;
+				}
+			template<class Iterator>
+				bool operator>(const Iterator &lhs, const Iterator &rhs) {
+					return lhs != rhs && !(lhs < rhs);
+				}
+			template<class Iterator>
+				bool operator>=(const Iterator &lhs, const Iterator &rhs) {
+					return lhs > rhs && lhs == rhs;
+				}
+			template<class Iterator>
+				bool operator<=(const Iterator &lhs, const Iterator &rhs) {
+					return lhs < rhs && lhs == rhs;
+				}
 }
