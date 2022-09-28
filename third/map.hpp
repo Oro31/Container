@@ -62,6 +62,7 @@ namespace ft {
 					std::cout << "from constructor: " << it->first << std::endl;
 					_size++; //if it->_root->_pair doesn't belong to this
 					_root.insert(ft::make_pair(it->first, it->second));
+					_root.inOrderTree(_root.base());
 					std::cout << "loop\n";
 				}
 				_end = _root.getEnd();
@@ -100,6 +101,7 @@ namespace ft {
 		T& operator[](const key_type &x) {return _root.find(x)->first;};
 		// modifiers:
 		ft::pair<iterator, bool> insert(const value_type &x) {
+			std::cout << "inserting: "<< x.first << std::endl;
 			bool b = false;
 			iterator	res = _root.find(x.first);
 			if (!(res.base())) {_root.delEnd(); _root.insert(x); b = true; _size++;}
@@ -159,10 +161,8 @@ namespace ft {
 		};
 //		const_iterator upper_bound(const key_type& x) const;
 		/*		
-		pair<iterator,iterator>
-		equal_range(const key_type& x);
-		pair<const_iterator,const_iterator>
-			equal_range(const key_type& x) const;
+		pair<iterator,iterator> equal_range(const key_type& x);
+		pair<const_iterator,const_iterator> equal_range(const key_type& x) const;
 		*/
 	};
 /*

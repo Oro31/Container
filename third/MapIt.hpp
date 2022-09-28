@@ -4,11 +4,6 @@
 #include "pair.hpp"
 
 namespace ft {
-	/*,
-			  class Compare = std::less<Key>>,
-			  class Allocator = std::allocator<std::pair<const Key, T>
-				>*/
-//	template <class Key, class T>	
 	template <class T>	
 	class MapIt {
 			public:
@@ -37,7 +32,6 @@ namespace ft {
 						left = NULL;
 						right = NULL;
 					};
-
 					Node(value_type pr) {
 						end = false;
 						pair = pr;
@@ -59,9 +53,14 @@ namespace ft {
 					std::cout << "from: " << str;
 					if (node) {std::cout << ": first = " << node->pair.first;}
 					std::cout << ": root = " << node
-						<< ", parent = " << node->parent
-						<< ", right = " << node->right
-						<< ", left = " << node->left << std::endl;
+						<< ", parent = " << node->parent;
+					if (node->parent) {std::cout << "parent->first = " << node->parent->pair.first << std::endl;}
+					std::cout << ", right = " << node->right;
+					if (node->right) {std::cout << "right->first = " << node->right->pair.first << std::endl;}
+					std::cout << ", left = " << node->left;
+					if (node->left) {std::cout << "left->first = " << node->left->pair.first << std::endl;}
+					else 
+						std::cout << std::endl;
 				}
 
 				Node	*_root;
@@ -70,24 +69,15 @@ namespace ft {
 			public:
 
 				MapIt() {_root = NULL;};
+				MapIt(Node *node) : _root(node) {};
 				MapIt(value_type pair) {_root = newNode(pair);};
 				~MapIt() {};
 				template<class Iterator>
 				MapIt(const Iterator &it) {*this = it;};
 
-				MapIt(Node *node) {
-					_root = node;
-				};
 
-//				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
 				MapIt &operator=(const MapIt &it) {
 					_root = it._root;
-//					_root->end = it._root->end;
-//					_root->pair = make_pair(it->first, it->second);
-//					_root->height = it._root->height;
-//					_root->parent = it._root->parent;
-//					_root->left = it._root->left;
-//					_root->right = it._root->right;
 					return *this;
 				};
 				MapIt(const MapIt &it) {*this = it;};
@@ -99,9 +89,11 @@ namespace ft {
 				const Node *base() const {return _root;};
 
 				MapIt &operator++() {
-					std::cout << "before ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+//					std::cout << "before ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					printNode(_root, "before++");
 					_root = getNextNode(_root);
-					std::cout << "ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					printNode(_root, "after++");
+//					std::cout << "ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
 					return *this;
 				};
 				MapIt &operator--() {
@@ -216,9 +208,11 @@ namespace ft {
 					Node	*T2 = x->right;
 
 					x->right = y;
+					if (T2)
+						T2->parent = y;
 					y->left = T2;
+					x->parent = y->parent;
 					y->parent = x;
-					x->parent = NULL;
 
 					y->height = max(height(y->left),
 							height(y->right)) + 1;
@@ -235,9 +229,11 @@ namespace ft {
 					Node	*T2 = y->left;
 
 					y->left = x;
+					if (T2)
+						T2->parent = x;
 					x->right = T2;
+					y->parent = x->parent;
 					x->parent = y;
-					y->parent = NULL;
 
 					x->height = max(height(x->left),
 							height(x->right)) + 1;
@@ -285,7 +281,8 @@ namespace ft {
 				void inOrderTree(Node *root) {
 					if (!root) {return;}
 					inOrderTree(root->left);
-					std::cout << "inorder root->key = " << root->pair.first << std::endl;
+					printNode(root, "inorder: ");
+//					std::cout << "inorder root->key = " << root->pair.first << std::endl;
 					inOrderTree(root->right);
 				};
 
@@ -386,6 +383,7 @@ namespace ft {
 					friend bool operator!=(const Iterator &lhs, const Iterator &rhs);
 				template<class Iterator>
 					friend bool operator==(const Iterator &lhs, const Iterator &rhs);
+				/*
 				template<class Iterator>
 					friend bool operator>(const Iterator &lhs, const Iterator &rhs);
 				template<class Iterator>
@@ -394,19 +392,20 @@ namespace ft {
 					friend bool operator<(const Iterator &lhs, const Iterator &rhs);
 				template<class Iterator>
 					friend bool operator<=(const Iterator &lhs, const Iterator &rhs);
+					*/
 		};
 			template<class Iterator>
 				bool operator!=(const Iterator &lhs, const Iterator &rhs) {
-//					std::cout << lhs.base() << "!= " << rhs.base();
-					return lhs.base()->pair.first != rhs.base()->pair.first; //lhs != rhs;
-				}
-			template<class Iterator>
-				bool operator<(const Iterator &lhs, const Iterator &rhs) {
-					return lhs.base()->pair.first < rhs.base()->pair.first;
+					return lhs.base() != rhs.base();
 				}
 			template<class Iterator>
 				bool operator==(const Iterator &lhs, const Iterator &rhs) {
-					return lhs == rhs;
+					return !(lhs != rhs);
+				}
+			/*
+			template<class Iterator>
+				bool operator<(const Iterator &lhs, const Iterator &rhs) {
+					return lhs.base() < rhs.base();
 				}
 			template<class Iterator>
 				bool operator>(const Iterator &lhs, const Iterator &rhs) {
@@ -420,4 +419,5 @@ namespace ft {
 				bool operator<=(const Iterator &lhs, const Iterator &rhs) {
 					return lhs < rhs && lhs == rhs;
 				}
+				*/
 }
