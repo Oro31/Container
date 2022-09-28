@@ -1,15 +1,20 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <memory>
+#include "pair.hpp"
 
 namespace ft {
-	template <class Key, class T,
-			  class Compare = std::less<Key>>/*,
+	/*,
+			  class Compare = std::less<Key>>,
 			  class Allocator = std::allocator<std::pair<const Key, T>
 				>*/
-		class MapIt {
+//	template <class Key, class T>	
+	template <class T>	
+	class MapIt {
 			public:
-				typedef std::pair<Key, T>						value_type;
+				typedef T										value_type;
+				typedef typename value_type::first_type			key_type;
+				typedef typename value_type::second_type		mapped_type;
 				typedef value_type								*pointer;
 				typedef value_type								&reference;
 				typedef std::ptrdiff_t							difference_type;
@@ -26,7 +31,7 @@ namespace ft {
 
 					Node() {
 						end = false;
-						pair = std::pair<Key, T>();
+						pair = T();
 						height = 1;
 						parent = NULL;
 						left = NULL;
@@ -41,7 +46,23 @@ namespace ft {
 						left = NULL;
 						right = NULL;
 					};
+					Node(Node *node) {
+						end = node->end;
+						pair = ft::make_pair(node->pair.first, node->pair.second);
+						height = node->height;
+						parent = node->parent;
+						left = node->left;
+						right = node->right;
+					};
 				};
+				void printNode(Node *node, std::string str) {
+					std::cout << "from: " << str;
+					if (node) {std::cout << ": first = " << node->pair.first;}
+					std::cout << ": root = " << node
+						<< ", parent = " << node->parent
+						<< ", right = " << node->right
+						<< ", left = " << node->left << std::endl;
+				}
 
 				Node	*_root;
 //				Compare	_comp;
@@ -61,12 +82,12 @@ namespace ft {
 //				MapIt &operator=(const pointer it) {root->pair = it; return *this;};
 				MapIt &operator=(const MapIt &it) {
 					_root = it._root;
-					_root->end = it._root->end;
-					_root->pair = it._root->pair;
-					_root->height = it._root->height;
-					_root->parent = it._root->parent;
-					_root->left = it._root->left;
-					_root->right = it._root->right;
+//					_root->end = it._root->end;
+//					_root->pair = make_pair(it->first, it->second);
+//					_root->height = it._root->height;
+//					_root->parent = it._root->parent;
+//					_root->left = it._root->left;
+//					_root->right = it._root->right;
 					return *this;
 				};
 				MapIt(const MapIt &it) {*this = it;};
@@ -77,15 +98,25 @@ namespace ft {
 				Node *base() {return _root;};
 				const Node *base() const {return _root;};
 
-				MapIt &operator++() {_root = getNextNode(_root); return *this;};
-				MapIt &operator--() {_root = getPrevNode(_root); return *this;};
+				MapIt &operator++() {
+					std::cout << "before ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					_root = getNextNode(_root);
+					std::cout << "ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					return *this;
+				};
+				MapIt &operator--() {
+					std::cout << "before ope--: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					_root = getPrevNode(_root);
+					std::cout << "ope--: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
+					return *this;
+				};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;};
 				MapIt operator--(int) {MapIt tmp(*this); operator--(); return tmp;};
 				
 				MapIt &operator+=(int n) {for (int i = 0; i < n; i++) {operator++();} return *this;};
 				MapIt &operator-=(int n) {for (int i = 0; i < n; i++) {operator--();} return *this;};
 
-				T &operator[](Key k) {return this->find(k)->second;};
+				mapped_type &operator[](key_type k) {return this->find(k)->second;};
 				MapIt operator+(int n) const {MapIt r(*this); r+=n; return r;};
 				MapIt operator-(int n) const {MapIt r(*this); r-=n; return r;};
 
@@ -124,38 +155,63 @@ namespace ft {
 				};
 
 				Node *getPrevNode(Node *node) {
+					printNode(node, "gp");
 					if (!node)
 						return NULL;
 					Node	*tmp = node;
-					if (tmp->left)
+					if (tmp->left) {
+						std::cout << "from getPrev1: " << maxValueNode(tmp->left) << std::endl;
 						return maxValueNode(tmp->left);
-					if (tmp->parent && tmp == tmp->parent->right)
-						return tmp->parent;
+					}
 					if (!tmp->parent)
 						return NULL;
-					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
-						tmp = tmp->parent;
-					if (tmp->pair.first == this->minValueKey(node))
-						return NULL;
-					return tmp->parent;
+					if (tmp->parent && tmp == tmp->parent->right) {
+						std::cout << "from getPrev2: " << tmp->parent << std::endl;
+						return tmp->parent;
+					}
+					if (tmp->parent && tmp->parent->parent) {
+						std::cout << "from getPrev3: " << tmp->parent->parent << std::endl;
+						return tmp->parent->parent;
+					}
+//					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
+//						tmp = tmp->parent;
+//					if (tmp->pair.first == this->minValueKey(node))
+//						return NULL;
+					std::cout << "from getPrev4: " << tmp->left << std::endl;
+//					return tmp->parent;
+					return tmp->left;
 				};
 
 				Node *getNextNode(Node *node) {
+					printNode(node, "gn");
 					if (!node)
 						return NULL;
 					Node	*tmp = node;
-					if (tmp->right)
+					if (tmp->right) {
+						std::cout << "from getNext1: " << minValueNode(tmp->right) << std::endl;
 						return minValueNode(tmp->right);
-					if (tmp->parent && tmp == tmp->parent->left)
-						return tmp->parent;
+					}
 					if (!tmp->parent)
 						return NULL;
-					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
-						tmp = tmp->parent;
-					return tmp->parent;
+					if (tmp->parent && tmp == tmp->parent->left) {
+						std::cout << "from getNext2: " << tmp->parent << std::endl;
+						return tmp->parent;
+					}
+					if (tmp->parent && tmp->parent->parent) {
+						std::cout << "from getNext3: " << tmp->parent->parent << std::endl;
+						return tmp->parent->parent;
+					}
+//					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
+//						tmp = tmp->parent;
+//					if (tmp->pair.first == this->minValueKey(node))
+//						return NULL;
+//					return tmp->parent;
+					std::cout << "from getNext4: " << tmp->right << std::endl;
+					return tmp->right;
 				};
 
 				Node *rightRotate(Node *y) {
+					printNode(y, "rr");
 					Node	*x = y->left;
 					Node	*T2 = x->right;
 
@@ -168,11 +224,13 @@ namespace ft {
 							height(y->right)) + 1;
 					x->height = max(height(x->left),
 							height(x->right)) + 1;
+					printNode(y, "rr");
 
 					return x;
 				};
 
 				Node *leftRotate(Node *x) {
+					printNode(x, "lr");
 					Node	*y = x->right;
 					Node	*T2 = y->left;
 
@@ -185,6 +243,7 @@ namespace ft {
 							height(x->right)) + 1;
 					y->height = max(height(y->left),
 							height(y->right)) + 1;
+					printNode(x, "lr");
 
 					return y;
 				};
@@ -231,7 +290,7 @@ namespace ft {
 				};
 
 
-				Node *deleteNode(Node *root, Key k) {
+				Node *deleteNode(Node *root, key_type k) {
 					if (!root) {return root;}
 					if (k < root->pair.first) {
 						root->left = deleteNode(root->left, k);
@@ -272,7 +331,7 @@ namespace ft {
 					}
 					return root;
 				};
-				void searchIt(MapIt *ret, Node *node, Key k) {
+				void searchIt(MapIt *ret, Node *node, key_type k) {
 					if (!node)
 						return ;
 					else if (node->pair.first == k)
@@ -280,13 +339,13 @@ namespace ft {
 					searchIt(ret, node->left, k);
 					searchIt(ret, node->right, k);
 				}
-				Key minValueKey(Node *node) {
+				key_type minValueKey(Node *node) {
 					Node	*current = node;
 					while (current && current->left != NULL)
 						current = current->left;
 					return current->pair.first;
 				};
-				Key maxValueKey(Node *node) {
+				key_type maxValueKey(Node *node) {
 					Node	*current = node;
 					while (current && current->right != NULL && !current->right->end)
 						current = current->right;
@@ -298,6 +357,7 @@ namespace ft {
 				};
 				void delEnd() {
 					Node *tmp = this->maxValueNode(_root);
+					std::cout << tmp << std::endl;
 					if (tmp && tmp->right && tmp->right->end) {
 						tmp->right->end = false;
 						tmp->right = NULL;
@@ -316,8 +376,8 @@ namespace ft {
 					return MapIt(end);
 				};
 				void print() {this->inOrderTree(_root);};
-				void erase(Key k) {_root = deleteNode(_root, k);};
-				MapIt find(Key k) {
+				void erase(key_type k) {_root = deleteNode(_root, k);};
+				MapIt find(key_type k) {
 					MapIt	ret;
 					searchIt(&ret, _root, k);
 					return ret;

@@ -7,19 +7,19 @@ namespace ft {
 		class Key,
 		class T,
 		class Compare = std::less<Key>,
-		class Allocator = std::allocator<std::pair<const Key, T>>
+		class Allocator = std::allocator<ft::pair<Key, T>>
 	>
 	class map {
 		public:
 			typedef Key											key_type;
 			typedef T											mapped_type;
-			typedef std::pair<const Key, T>						value_type;
+			typedef ft::pair<Key, T>						value_type;
 			typedef Compare										key_compare;
 			typedef Allocator									allocator_type;
 			typedef typename Allocator::reference				reference;
 			typedef typename Allocator::const_reference			const_reference;
-			typedef ft::MapIt<Key, T, Compare>							iterator;
-			typedef const ft::MapIt<Key, T, Compare>						const_iterator;
+			typedef ft::MapIt<value_type>					iterator;
+			typedef const ft::MapIt<value_type>			const_iterator;
 			typedef std::size_t									size_type;
 			typedef std::ptrdiff_t								difference_type;
 			typedef typename Allocator::pointer					pointer;
@@ -29,6 +29,7 @@ namespace ft {
 
 		private:
 			iterator	_root;
+			iterator	_end;
 			size_type	_size;
 			Allocator	_alloc; // use it to construct and deallocate
 //			Node		*_root;
@@ -52,18 +53,18 @@ namespace ft {
 
 	public:
 		explicit map(const Compare& comp = Compare(),
-				const Allocator& = Allocator()) : _root(0), _size(0) {};
+				const Allocator& = Allocator()) : _root(), _end(), _size() {};
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last,
 					const Compare& comp = Compare(), const Allocator& = Allocator()) {
-				iterator tmpf(first);
-				iterator tmpl(last);
 				_size = 0;
-				for (iterator it = tmpf; it != tmpl; it++) {
-					std::cout << "it++\n";
+				for (InputIterator it = first; it != last; it++) {
+					std::cout << "from constructor: " << it->first << std::endl;
 					_size++; //if it->_root->_pair doesn't belong to this
-					_root.insert(it.base()->pair);
+					_root.insert(ft::make_pair(it->first, it->second));
+					std::cout << "loop\n";
 				}
+				_end = _root.getEnd();
 			};
 		map(map<Key,T,Compare,Allocator>& other) {
 			*this = other;
@@ -83,7 +84,7 @@ namespace ft {
 //		iterator begin() {return _root.find(_root.minValueNode(_root.base())->pair.first);};
 		iterator begin() {return _root.find(_root.minValueKey(_root.base()));};
 //		const_iterator begin() const {return _root.find(_root.minValueNode(_root.base()));};
-		iterator end() {return _root.getEnd();};
+		iterator end() {return _end;};
 //		const_iterator end() const {return _root.getEnd();};
 //		reverse_iterator rbegin() {return _root.maxValueNode(&(_root._root));};
 //		const_reverse_iterator rbegin() const {return _root.maxValueNode(&(_root._root));};
@@ -98,11 +99,12 @@ namespace ft {
 		// 23.3.1.2 element access:
 		T& operator[](const key_type &x) {return _root.find(x)->first;};
 		// modifiers:
-		std::pair<iterator, bool> insert(const value_type &x) {
+		ft::pair<iterator, bool> insert(const value_type &x) {
 			bool b = false;
 			iterator	res = _root.find(x.first);
 			if (!(res.base())) {_root.delEnd(); _root.insert(x); b = true; _size++;}
-			return std::make_pair(_root.find(x.first), b);
+			_end = _root.getEnd();
+			return ft::make_pair(_root.find(x.first), b);
 		};
 		iterator insert(iterator position, const value_type& x) {
 			return this->insert(x).first;
