@@ -1,7 +1,7 @@
 #include "map.hpp"
 #include <list>
 
-using namespace ft;
+using namespace std;
 
 int main() {
 	std::list<pair<int, int> > lst;

@@ -89,17 +89,11 @@ namespace ft {
 				const Node *base() const {return _root;};
 
 				MapIt &operator++() {
-//					std::cout << "before ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
-					printNode(_root, "before++");
 					_root = getNextNode(_root);
-					printNode(_root, "after++");
-//					std::cout << "ope++: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
 					return *this;
 				};
 				MapIt &operator--() {
-					std::cout << "before ope--: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
 					_root = getPrevNode(_root);
-					std::cout << "ope--: " << "root = " << _root << ", parent = " << _root->parent << ", right = " << _root->right << ", left = " << _root->left << std::endl;
 					return *this;
 				};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;};
@@ -147,99 +141,74 @@ namespace ft {
 				};
 
 				Node *getPrevNode(Node *node) {
-					printNode(node, "gp");
 					if (!node)
 						return NULL;
 					Node	*tmp = node;
-					if (tmp->left) {
-						std::cout << "from getPrev1: " << maxValueNode(tmp->left) << std::endl;
+					if (tmp->left)
 						return maxValueNode(tmp->left);
-					}
 					if (!tmp->parent)
 						return NULL;
-					if (tmp->parent && tmp == tmp->parent->right) {
-						std::cout << "from getPrev2: " << tmp->parent << std::endl;
+					if (tmp->parent && tmp == tmp->parent->right)
 						return tmp->parent;
-					}
-					if (tmp->parent && tmp->parent->parent) {
-						std::cout << "from getPrev3: " << tmp->parent->parent << std::endl;
+					if (tmp->parent && tmp->parent->parent)
 						return tmp->parent->parent;
-					}
-//					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
-//						tmp = tmp->parent;
-//					if (tmp->pair.first == this->minValueKey(node))
-//						return NULL;
-					std::cout << "from getPrev4: " << tmp->left << std::endl;
-//					return tmp->parent;
 					return tmp->left;
 				};
 
 				Node *getNextNode(Node *node) {
-					printNode(node, "gn");
 					if (!node)
 						return NULL;
 					Node	*tmp = node;
-					if (tmp->right) {
-						std::cout << "from getNext1: " << minValueNode(tmp->right) << std::endl;
+					std::cout << "gnn: " << tmp << "parent = " << tmp->parent->left << std::endl;
+					if (tmp->right)
 						return minValueNode(tmp->right);
-					}
 					if (!tmp->parent)
 						return NULL;
-					if (tmp->parent && tmp == tmp->parent->left) {
-						std::cout << "from getNext2: " << tmp->parent << std::endl;
+					if (tmp->parent && tmp == tmp->parent->left)
 						return tmp->parent;
-					}
-					if (tmp->parent && tmp->parent->parent) {
-						std::cout << "from getNext3: " << tmp->parent->parent << std::endl;
+					if (tmp->parent && tmp->parent->parent)
 						return tmp->parent->parent;
-					}
-//					while (tmp->parent && tmp->parent->pair.first < node->pair.first)
-//						tmp = tmp->parent;
-//					if (tmp->pair.first == this->minValueKey(node))
-//						return NULL;
-//					return tmp->parent;
-					std::cout << "from getNext4: " << tmp->right << std::endl;
 					return tmp->right;
 				};
 
 				Node *rightRotate(Node *y) {
-					printNode(y, "rr");
 					Node	*x = y->left;
 					Node	*T2 = x->right;
 
 					x->right = y;
-					if (T2)
+					if (T2 && T2 != y)
 						T2->parent = y;
 					y->left = T2;
-					x->parent = y->parent;
-					y->parent = x;
+					if (x != y->parent)
+						x->parent = y->parent;
+					if (y != x)
+						y->parent = x;
 
 					y->height = max(height(y->left),
 							height(y->right)) + 1;
 					x->height = max(height(x->left),
 							height(x->right)) + 1;
-					printNode(y, "rr");
 
 					return x;
 				};
 
 				Node *leftRotate(Node *x) {
-					printNode(x, "lr");
 					Node	*y = x->right;
 					Node	*T2 = y->left;
 
 					y->left = x;
-					if (T2)
+					if (T2 && T2 != x)
 						T2->parent = x;
 					x->right = T2;
-					y->parent = x->parent;
-					x->parent = y;
+					if (y != x->parent)
+						y->parent = x->parent;
+					if (x != y)
+						x->parent = y;
 
 					x->height = max(height(x->left),
 							height(x->right)) + 1;
 					y->height = max(height(y->left),
 							height(y->right)) + 1;
-					printNode(x, "lr");
 
 					return y;
 				};
@@ -282,7 +251,6 @@ namespace ft {
 					if (!root) {return;}
 					inOrderTree(root->left);
 					printNode(root, "inorder: ");
-//					std::cout << "inorder root->key = " << root->pair.first << std::endl;
 					inOrderTree(root->right);
 				};
 
@@ -302,7 +270,8 @@ namespace ft {
 							} else {
 								*root = *tmp;
 							}
-							free(tmp);
+//							delete tmp;
+							tmp = NULL;
 						} else {
 							Node	*tmp = minValueNode(root->right);
 							root->pair = tmp->pair;
@@ -349,12 +318,16 @@ namespace ft {
 					return current->pair.first;
 				};
 ///////////////////////////************************////////////////////////////////
-				void insert(value_type pr) {
-					_root = insertVal(_root, pr);
+				void print() {this->inOrderTree(_root);};
+				void insert(value_type pr) {_root = insertVal(_root, pr);};
+				void erase(key_type k) {_root = deleteNode(_root, k); std::cout << "node deleted = " << k << std::endl;};
+				MapIt find(key_type k) {
+					MapIt	ret;
+					searchIt(&ret, _root, k);
+					return ret;
 				};
 				void delEnd() {
 					Node *tmp = this->maxValueNode(_root);
-					std::cout << tmp << std::endl;
 					if (tmp && tmp->right && tmp->right->end) {
 						tmp->right->end = false;
 						tmp->right = NULL;
@@ -362,22 +335,14 @@ namespace ft {
 				}
 				MapIt getEnd() {
 					Node *tmp = this->maxValueNode(_root);
-					std::cout << "max = " << tmp << std::endl;
-					if (tmp->right && tmp->right->end)
+					if (tmp->right && tmp->right->end) {
 						return MapIt(tmp->right);
+					}
 					Node *end = new Node();
 					end->end = true;
 					tmp->right = end;
 					end->parent = tmp;
-					std::cout << "return = " << end << std::endl;
 					return MapIt(end);
-				};
-				void print() {this->inOrderTree(_root);};
-				void erase(key_type k) {_root = deleteNode(_root, k);};
-				MapIt find(key_type k) {
-					MapIt	ret;
-					searchIt(&ret, _root, k);
-					return ret;
 				};
 				template<class Iterator>
 					friend bool operator!=(const Iterator &lhs, const Iterator &rhs);
@@ -394,30 +359,12 @@ namespace ft {
 					friend bool operator<=(const Iterator &lhs, const Iterator &rhs);
 					*/
 		};
-			template<class Iterator>
-				bool operator!=(const Iterator &lhs, const Iterator &rhs) {
-					return lhs.base() != rhs.base();
-				}
-			template<class Iterator>
-				bool operator==(const Iterator &lhs, const Iterator &rhs) {
-					return !(lhs != rhs);
-				}
-			/*
-			template<class Iterator>
-				bool operator<(const Iterator &lhs, const Iterator &rhs) {
-					return lhs.base() < rhs.base();
-				}
-			template<class Iterator>
-				bool operator>(const Iterator &lhs, const Iterator &rhs) {
-					return lhs != rhs && !(lhs < rhs);
-				}
-			template<class Iterator>
-				bool operator>=(const Iterator &lhs, const Iterator &rhs) {
-					return lhs > rhs && lhs == rhs;
-				}
-			template<class Iterator>
-				bool operator<=(const Iterator &lhs, const Iterator &rhs) {
-					return lhs < rhs && lhs == rhs;
-				}
-				*/
+	template<class Iterator>
+		bool operator!=(const Iterator &lhs, const Iterator &rhs) {
+			return lhs.base() != rhs.base();
+		}
+	template<class Iterator>
+		bool operator==(const Iterator &lhs, const Iterator &rhs) {
+			return !(lhs != rhs);
+		}
 }

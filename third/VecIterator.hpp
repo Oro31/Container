@@ -19,7 +19,6 @@ namespace ft {
 			VecIterator(const VecIterator &mit) {*this = mit;};
 
 			reference operator*() {return *p;};
-//			const reference operator*() const {return *p;};
 			pointer operator->() {return p;};
 			const pointer operator->() const {return p;};
 			pointer base() {return p;};
