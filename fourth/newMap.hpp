@@ -79,10 +79,14 @@ namespace ft {
 						_p = NULL;
 					else if (tmp->parent && tmp == tmp->parent->left)
 						_p = tmp->parent;
-					else if (tmp->parent && tmp->parent->parent)
-						_p = tmp->parent->parent;
-					else 
-						_p = tmp->right;
+					else {
+						while (tmp->parent && tmp->parent->pair.first <= _p->pair.first)
+							tmp = tmp->parent;
+						if (tmp->parent && tmp->parent->pair.first > _p->pair.first)
+							_p = tmp->parent;
+						else 
+							_p = tmp->right;
+					}
 					return *this;
 				};
 				MapIt &operator--() {
@@ -93,10 +97,14 @@ namespace ft {
 						_p = NULL;
 					else if (tmp->parent && tmp == tmp->parent->right)
 						_p = tmp->parent;
-					else if (tmp->parent && tmp->parent->parent)
-						_p = tmp->parent->parent;
-					else
-						_p = tmp->left;
+					else {
+						while (tmp->parent && tmp->parent->pair.first >= _p->pair.first)
+							tmp = tmp->parent;
+						if (tmp->parent && tmp->parent->pair.first < _p->pair.first)
+							_p = tmp->parent;
+						else 
+							_p = tmp->left;
+					}
 					return *this;
 				};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;}
@@ -479,6 +487,7 @@ namespace ft {
 				/////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////
 
+		public:
 			typedef MapIt<value_type>					iterator;
 			typedef const MapIt<value_type>			const_iterator;
 			typedef std::reverse_iterator<iterator>				reverse_iterator;
@@ -510,15 +519,17 @@ namespace ft {
 		explicit map(const Compare& comp = Compare(),
 				const Allocator& = Allocator()) : _root(NULL), _end(NULL), _size(0) {};
 		template <class InputIterator>
-			map(InputIterator first, InputIterator last,
-					const Compare& comp = Compare(), const Allocator& = Allocator()) : _root(NULL), _end(NULL), _size(0) {
-				std::cout << "inputIt constructor\n";;
-				for (InputIterator it = first; it != last; it++) {
-					std::cout << "it: " << it->first << std::endl;
-					insert(ft::make_pair(it->first, it->second));
-				}
-				getEnd();
-			};
+		map(InputIterator first, InputIterator last,
+				const Compare& comp = Compare(),
+				const Allocator& = Allocator()) :
+				_root(NULL), _end(NULL), _size(0) {
+			std::cout << "construct it\n";
+			for (InputIterator it = first; it != last; it++) {
+//				std::cout << "it = " << it->first;
+				insert(ft::make_pair(it->first, it->second));
+			}
+			getEnd();
+		};
 		map(map<Key,T,Compare,Allocator>& other) {
 			*this = other;
 		};
@@ -547,7 +558,9 @@ namespace ft {
 		ft::pair<iterator, bool> insert(const value_type &val) {
 			bool b = false;
 			value_type	x = ft::make_pair<key_type, mapped_type>(val.first, val.second);
-			if (!searchIt(_root, x)) {
+//			if (!searchIt(_root, x)) {
+			if (!find(x.first).base()) {
+				std::cout << "let's insert: " << val.first << std::endl;
 				delEnd();
 				_root = Insert(_root, NULL, x);
 				getEnd();
@@ -563,7 +576,7 @@ namespace ft {
 		template <class InputIterator>
 			void insert(InputIterator first, InputIterator last) {
 				for (iterator it = first; it != last; it++) {
-					this->insert(it.base()->pair);
+					this->insert(*it);
 				}
 			};
 		/*
@@ -602,14 +615,13 @@ namespace ft {
 		// */
 		iterator find(const key_type& x) {
 			value_type	pr = ft::make_pair<key_type, mapped_type>(x, mapped_type());
-			printNode(_root, "from find: ");
 			iterator	res(searchIt(_root, pr));
-			std::cout << "find " << res.base() << std::endl;
 			return res;
 		};
 //		const_iterator find(const key_type& x) const;
 		size_type count(const key_type& x) {
 			size_type	res = 0;
+			if (find(x).base()) {res++;}
 			return res;
 		};
 		iterator lower_bound(const key_type& x) {
