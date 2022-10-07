@@ -57,7 +57,7 @@ namespace ft {
 			public:
 
 				MapIt() {_p = NULL;}
-				MapIt(Node *node) : _p(node) {}
+				MapIt(Node *node) {_p = node;}
 				~MapIt() {};
 				MapIt &operator=(const MapIt &it) {
 					_p = it._p;
@@ -75,25 +75,28 @@ namespace ft {
 					Node	*tmp = _p;
 					if (tmp->right)
 						_p = minValueNode(tmp->right);
-					if (!tmp->parent)
+					else if (!tmp->parent)
 						_p = NULL;
-					if (tmp->parent && tmp == tmp->parent->left)
+					else if (tmp->parent && tmp == tmp->parent->left)
 						_p = tmp->parent;
-					if (tmp->parent && tmp->parent->parent)
+					else if (tmp->parent && tmp->parent->parent)
 						_p = tmp->parent->parent;
-					_p = tmp->right;
+					else 
+						_p = tmp->right;
+					return *this;
 				};
 				MapIt &operator--() {
 					Node	*tmp = _p;
 					if (tmp->left)
 						_p = maxValueNode(tmp->left);
-					if (!tmp->parent)
+					else if (!tmp->parent)
 						_p = NULL;
-					if (tmp->parent && tmp == tmp->parent->right)
+					else if (tmp->parent && tmp == tmp->parent->right)
 						_p = tmp->parent;
-					if (tmp->parent && tmp->parent->parent)
+					else if (tmp->parent && tmp->parent->parent)
 						_p = tmp->parent->parent;
-					_p = tmp->left;
+					else
+						_p = tmp->left;
 					return *this;
 				};
 				MapIt operator++(int) {MapIt tmp(*this); operator++(); return tmp;}
@@ -117,18 +120,19 @@ namespace ft {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-				void printNode(Node *node, std::string str) {
-					std::cout << "from: " << str;
-					if (node) {std::cout << ": first = " << node->pair.first;}
-					std::cout << ": root = " << node
-						<< ", parent = " << node->parent;
-					if (node->parent) {std::cout << "parent->first = " << node->parent->pair.first << std::endl;}
-					std::cout << ", right = " << node->right;
-					if (node->right) {std::cout << "right->first = " << node->right->pair.first << std::endl;}
-					std::cout << ", left = " << node->left;
-					if (node->left) {std::cout << "left->first = " << node->left->pair.first << std::endl;}
-					else 
-						std::cout << std::endl;
+				static void printNode(Node *node, std::string str) {
+					std::cout << "\nfrom " << str;
+					std::cout << ": root = " << node;
+					if (node) {
+						std::cout << ": first = " << node->pair.first
+							<< ", \nparent = " << node->parent;
+						if (node->parent) {std::cout << ": parent->first = " << node->parent->pair.first;}
+						std::cout << ", \nright = " << node->right;
+						if (node->right) {std::cout << ": right->first = " << node->right->pair.first;}
+						std::cout << ", \nleft = " << node->left;
+						if (node->left) {std::cout << ": left->first = " << node->left->pair.first;}
+					}
+					std::cout << std::endl;
 				};
 
 ///////////////////////////************************////////////////////////////////
@@ -161,10 +165,6 @@ namespace ft {
 					getMaxHeight(root->right, height);
 				};
 
-				Node *newNode(value_type &pair) {
-					return new Node(pair);
-				};
-
 				static Node *minValueNode(Node *node) {
 					Node	*current = node;
 					while (current && current->left != NULL)
@@ -178,6 +178,28 @@ namespace ft {
 						current = current->right;
 					return current;
 				};
+
+				Node *newNode() {
+					Node	*ret = _allocNode.allocate(1);
+					ret->end = false;
+					ret->height = 1;
+					ret->pair = value_type();
+					ret->parent = NULL;
+					ret->left = NULL;
+					ret->right = NULL;
+					return ret;
+				}
+
+				Node *newNode(value_type &pr) {
+					Node	*ret = _allocNode.allocate(1);
+					ret->end = false;
+					ret->height = 1;
+					_allocNode.construct(&ret->pair, pr);
+					ret->parent = NULL;
+					ret->left = NULL;
+					ret->right = NULL;
+					return ret;
+				}
 
 ///////////////////////////************************////////////////////////////////
 
@@ -310,12 +332,8 @@ namespace ft {
 				Node *Insert(Node *root,
 									Node *parent, value_type pair){
 					if (!root) {
-						root = new Node;
-						root->height= 1;
-						root->left = NULL;
-						root->right = NULL;
+						root = newNode(pair);
 						root->parent = parent;
-						root->pair = pair;
 					} else if (root->pair.first > pair.first) {
 						root->left = Insert(root->left, root, pair);
 						int firstHeight = 0;
@@ -425,32 +443,33 @@ namespace ft {
 				Node *searchIt(Node *node, value_type &pr) {
 					if (!node)
 						return NULL;
-					else if (node->pair.first == pr.first) {
-						std::cout << node->pair.first << std::endl;
+					else if (node->pair.first < pr.first)
+						return searchIt(node->right, pr);
+					else if (node->pair.first > pr.first)
+						return searchIt(node->left, pr);
+					else
 						return node;
-					} else
-						return NULL;
-					searchIt(node->left, pr);
-					searchIt(node->right, pr);
-
 				}
 
 ///////////////////////////************************////////////////////////////////
 
-				void delEnd(Node *end) {
-					if (end)
-						_allocNode.destroy(end);
+				void delEnd() {
+					if (_end) {
+						_end->parent->right = NULL;
+						_allocNode.destroy(&_end->pair);
+						_allocNode.deallocate(_end, 1);
+						_end = NULL;
+					}
 				}
-				Node* getEnd() {
-					Node *tmp = this->maxValueNode(_root);
-					if (tmp && tmp->right && tmp->right->end)
-						return tmp->right;
-					Node *end = new Node;
-					end->end = true;
-					if (tmp)
-						tmp->right = end;
-					end->parent = tmp;
-					return end;
+
+				void getEnd() {
+					if (!_end) {
+						_end = newNode();
+						_end->end = true;
+						_end->parent = maxValueNode(_root);
+						if (_end->parent)
+							_end->parent->right = _end;
+					}
 				};
 
 				/////////////////////////////////////////////////////////////////////
@@ -492,13 +511,13 @@ namespace ft {
 				const Allocator& = Allocator()) : _root(NULL), _end(NULL), _size(0) {};
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last,
-					const Compare& comp = Compare(), const Allocator& = Allocator()) {
-				_size = 0;
+					const Compare& comp = Compare(), const Allocator& = Allocator()) : _root(NULL), _end(NULL), _size(0) {
+				std::cout << "inputIt constructor\n";;
 				for (InputIterator it = first; it != last; it++) {
-					_size++; //if it->_root->_pair doesn't belong to this
-					_root = insert(ft::make_pair(it->first, it->second));
+					std::cout << "it: " << it->first << std::endl;
+					insert(ft::make_pair(it->first, it->second));
 				}
-				_end = getEnd();
+				getEnd();
 			};
 		map(map<Key,T,Compare,Allocator>& other) {
 			*this = other;
@@ -509,9 +528,10 @@ namespace ft {
 			return *this;
 		};
 		// iterators:
-		iterator begin() {iterator	tmp(minValuKey(_root)); return tmp;};
+		iterator begin() {iterator	tmp(minValueNode(_root)); return tmp;};
 //		const_iterator begin() const {return _root.find(_root.minValueNode(_root.base()));};
-		iterator end() {return _end;};
+//		iterator end() {iterator	tmp(maxValueNode(_root)); return tmp;};
+		iterator end() {getEnd(); return _end;};
 //		const_iterator end() const {return _root.getEnd();};
 //		reverse_iterator rbegin() {return _root.maxValueNode(&(_root._root));};
 //		const_reverse_iterator rbegin() const {return _root.maxValueNode(&(_root._root));};
@@ -522,12 +542,18 @@ namespace ft {
 		size_type size() const {return _size;};
 		size_type max_size() const {return _alloc.max_size();};
 		// 23.3.1.2 element access:
-		T& operator[](const key_type &x) {return find(ft::make_pair<key_type, mapped_type>(x, mapped_type()))->pair.first;};
+		T& operator[](const key_type &x) {return find(x)->second;};
 		// modifiers:
 		ft::pair<iterator, bool> insert(const value_type &val) {
 			bool b = false;
 			value_type	x = ft::make_pair<key_type, mapped_type>(val.first, val.second);
-			if (!searchIt(_root, x)) {_root = Insert(_root, NULL, x); b = true; _size++;}
+			if (!searchIt(_root, x)) {
+				delEnd();
+				_root = Insert(_root, NULL, x);
+				getEnd();
+				b = true;
+				_size++;
+			}
 			iterator	res(searchIt(_root, x));
 			return ft::make_pair(res, b);
 		};
@@ -568,7 +594,6 @@ namespace ft {
 			this->erase(this->begin(), this->end());
 		};
 		// observers:
-				void print() {};
 		void printmap() {this->inOrderTree(_root);}
 		/*
 		key_compare key_comp() const;
@@ -576,13 +601,16 @@ namespace ft {
 		// 23.3.1.3 map operations:
 		// */
 		iterator find(const key_type& x) {
-			iterator	tmp(find(ft::make_pair<key_type, mapped_type>(x, mapped_type())));
-			return tmp;
+			value_type	pr = ft::make_pair<key_type, mapped_type>(x, mapped_type());
+			printNode(_root, "from find: ");
+			iterator	res(searchIt(_root, pr));
+			std::cout << "find " << res.base() << std::endl;
+			return res;
 		};
 //		const_iterator find(const key_type& x) const;
 		size_type count(const key_type& x) {
-			iterator	tmp(find(ft::make_pair<key_type, mapped_type>(x, mapped_type())));
-			return tmp;
+			size_type	res = 0;
+			return res;
 		};
 		iterator lower_bound(const key_type& x) {
 			iterator	ret = this->begin();
