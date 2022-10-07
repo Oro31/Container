@@ -42,5 +42,18 @@ int main() {
 	for (ft::map<int, char>::iterator it = (--v.end()); it != v.begin(); it--) {
 		std::cout << it->first << std::endl;
 	}
+	std::cout << "\tstep erase\n";
+	ft::map<int, char>::iterator	itb = v.begin();
+	ft::map<int, char>::iterator	ite = v.end();
+	std::cout << "\tstep\n";
+	v.erase(itb, ite);
+	std::cout << "\tstep\n";
+	v.printmap();
+	std::cout << "\tstep insert\n";
+	std::cout << v.insert(ft::make_pair<int, char>(5, 'E')).second;
+	std::cout << "\tstep insert\n";
+	std::cout << v.insert(ft::make_pair<int, char>(15, 'P')).second;
+	std::cout << "\tstep\n";
+	v.printmap();
 	return 0;
 }
