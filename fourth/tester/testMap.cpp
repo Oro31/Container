@@ -2,7 +2,7 @@
 
 int main() {
 	ft::map<int, char>	t;
-	std::cout << "\tstep insert\n";
+	std::cout << "\tstep insert in t\n";
 	std::cout << t.insert(ft::make_pair<int, char>(5, 'E')).second;
 	std::cout << "\tstep\n";
 	std::cout << t.insert(ft::make_pair<int, char>(1, 'A')).second;
@@ -15,7 +15,7 @@ int main() {
 	std::cout << "\tstep\n";
 	std::cout << t.insert(ft::make_pair<int, char>(50, 'W')).second;
 	std::cout << "\tstep\n";
-	std::cout << t.insert(ft::make_pair<int, char>(-1, 'z')).second;
+	std::cout << t.insert(ft::make_pair<int, char>(2, 'z')).second;
 	std::cout << "\tstep\n";
 	std::cout << t.insert(ft::make_pair<int, char>(12, 'L')).second;
 	std::cout << "\tstep acces\n";
@@ -27,24 +27,26 @@ int main() {
 	std::cout << "\tstep\n";
 	std::cout << t.size();
 	std::cout << "\tstep iter construct\n";
-	std::cout << t.end().base();
-	std::cout << "\tstep\n";
+	std::cout << t.end().base() << "begin: " << t.begin().base();
+	std::cout << "\tstep cons m(2,1)\n";
 	ft::map<int, char>	m(t.begin(), t.end());
 	std::cout << "\tstep\n";
 	m.printmap();
 	std::cout << "\tstep\n";
+	std::cout << m.end().base() << "begin: " << m.begin().base();
 	ft::map<int, char>	v;
-	std::cout << "\tstep iter insert\n";
+	std::cout << "\tstep iter insert v\n";
 	v.insert(m.begin(), m.end());
 	std::cout << "\tstep\n";
 	v.printmap();
-	std::cout << "\tstep\n";
+	std::cout << "\tstep reverse iter\n";
 	for (ft::map<int, char>::iterator it = (--v.end()); it != v.begin(); it--) {
 		std::cout << it->first << std::endl;
 	}
 	std::cout << "\tstep erase\n";
 	ft::map<int, char>::iterator	itb = v.begin();
 	ft::map<int, char>::iterator	ite = v.end();
+	std::cout << itb.base() << " to " << ite.base();
 	std::cout << "\tstep\n";
 	v.erase(itb, ite);
 	std::cout << "\tstep\n";
