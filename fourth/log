@@ -1,0 +1,389 @@
+==2248648== Memcheck, a memory error detector
+==2248648== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2248648== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==2248648== Command: ./a.out
+==2248648== 
+	step insert in t
+allocated: 0x4de5cc0
+allocated: 0x4de5d30
+1	step
+allocated: 0x4de5da0
+1	step
+allocated: 0x4de5e10
+1	step
+allocated: 0x4de5e80
+1	step
+allocated: 0x4de5ef0
+1	step
+allocated: 0x4de5f60
+1	step
+allocated: 0x4de5fd0
+1	step
+allocated: 0x4de6040
+1	step acces
+1
+	step
+K
+	step
+
+from inorder: : root = 0x4de5da0: first = 1, 
+parent = 0x4de5cc0: parent->first = 5, 
+right = 0x4de5fd0: right->first = 2, 
+left = 0
+
+from inorder: : root = 0x4de5fd0: first = 2, 
+parent = 0x4de5da0: parent->first = 1, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de5cc0: first = 5, 
+parent = 0x4de5e80: parent->first = 25, 
+right = 0x4de5e10: right->first = 11, 
+left = 0x4de5da0: left->first = 1
+
+from inorder: : root = 0x4de5e10: first = 11, 
+parent = 0x4de5cc0: parent->first = 5, 
+right = 0x4de6040: right->first = 12, 
+left = 0
+
+from inorder: : root = 0x4de6040: first = 12, 
+parent = 0x4de5e10: parent->first = 11, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de5e80: first = 25, 
+parent = 0, 
+right = 0x4de5ef0: right->first = 51, 
+left = 0x4de5cc0: left->first = 5
+
+from inorder: : root = 0x4de5f60: first = 50, 
+parent = 0x4de5ef0: parent->first = 51, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de5ef0: first = 51, 
+parent = 0x4de5e80: parent->first = 25, 
+right = 0x4de5d30: right->first = 0, 
+left = 0x4de5f60: left->first = 50
+
+from inorder: : root = 0x4de5d30
+this is the end, my only friend, the end...
+: first = 0, 
+parent = 0x4de5ef0: parent->first = 51, 
+right = 0, 
+left = 0
+	step
+8	step iter construct
+0x4de5d30begin: 0x4de5da0	step cons m(2,1)
+allocated: 0x4de60b0
+allocated: 0x4de6120
+allocated: 0x4de6190
+allocated: 0x4de6200
+allocated: 0x4de6270
+allocated: 0x4de62e0
+allocated: 0x4de6350
+allocated: 0x4de63c0
+allocated: 0x4de6430
+	step
+
+from inorder: : root = 0x4de60b0: first = 1, 
+parent = 0x4de6190: parent->first = 2, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6190: first = 2, 
+parent = 0x4de6270: parent->first = 11, 
+right = 0x4de6200: right->first = 5, 
+left = 0x4de60b0: left->first = 1
+
+from inorder: : root = 0x4de6200: first = 5, 
+parent = 0x4de6190: parent->first = 2, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6270: first = 11, 
+parent = 0, 
+right = 0x4de6350: right->first = 25, 
+left = 0x4de6190: left->first = 2
+
+from inorder: : root = 0x4de62e0: first = 12, 
+parent = 0x4de6350: parent->first = 25, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6350: first = 25, 
+parent = 0x4de6270: parent->first = 11, 
+right = 0x4de63c0: right->first = 50, 
+left = 0x4de62e0: left->first = 12
+
+from inorder: : root = 0x4de63c0: first = 50, 
+parent = 0x4de6350: parent->first = 25, 
+right = 0x4de6430: right->first = 51, 
+left = 0
+
+from inorder: : root = 0x4de6430: first = 51, 
+parent = 0x4de63c0: parent->first = 50, 
+right = 0x4de6120: right->first = 0, 
+left = 0
+
+from inorder: : root = 0x4de6120
+this is the end, my only friend, the end...
+: first = 0, 
+parent = 0x4de6430: parent->first = 51, 
+right = 0, 
+left = 0
+	step
+0x4de6120begin: 0x4de60b0	step iter insert v
+allocated: 0x4de64a0
+allocated: 0x4de6510
+allocated: 0x4de6580
+allocated: 0x4de65f0
+allocated: 0x4de6660
+allocated: 0x4de66d0
+allocated: 0x4de6740
+allocated: 0x4de67b0
+allocated: 0x4de6820
+	step
+
+from inorder: : root = 0x4de64a0: first = 1, 
+parent = 0x4de6580: parent->first = 2, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6580: first = 2, 
+parent = 0x4de6660: parent->first = 11, 
+right = 0x4de65f0: right->first = 5, 
+left = 0x4de64a0: left->first = 1
+
+from inorder: : root = 0x4de65f0: first = 5, 
+parent = 0x4de6580: parent->first = 2, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6660: first = 11, 
+parent = 0, 
+right = 0x4de6740: right->first = 25, 
+left = 0x4de6580: left->first = 2
+
+from inorder: : root = 0x4de66d0: first = 12, 
+parent = 0x4de6740: parent->first = 25, 
+right = 0, 
+left = 0
+
+from inorder: : root = 0x4de6740: first = 25, 
+parent = 0x4de6660: parent->first = 11, 
+right = 0x4de67b0: right->first = 50, 
+left = 0x4de66d0: left->first = 12
+
+from inorder: : root = 0x4de67b0: first = 50, 
+parent = 0x4de6740: parent->first = 25, 
+right = 0x4de6820: right->first = 51, 
+left = 0
+
+from inorder: : root = 0x4de6820: first = 51, 
+parent = 0x4de67b0: parent->first = 50, 
+right = 0x4de6510: right->first = 0, 
+left = 0
+
+from inorder: : root = 0x4de6510
+this is the end, my only friend, the end...
+: first = 0, 
+parent = 0x4de6820: parent->first = 51, 
+right = 0, 
+left = 0
+	step reverse iter
+51
+50
+25
+12
+11
+5
+2
+	step erase
+0x4de64a0 to 0x4de6510	step
+0x4de64a0erased
+0x4de64a0void erase
+destroying: 0x4de64a0
+returning: 0x4de6580
+returning: 0x4de6660
+0x4de6580erased
+0x4de6580void erase
+nonleft destroying: 0x4de6580
+returning: 0x4de6740
+0x4de65f0erased
+0x4de65f0void erase
+destroying: 0x4de65f0
+returning: 0x4de6660
+returning: 0x4de6740
+0x4de6660erased
+0x4de6660void erase
+nonleft destroying: 0x4de6660
+returning: 0x4de6740
+0x4de66d0erased
+0x4de66d0void erase
+destroying: 0x4de66d0
+returning: 0x4de67b0
+0x4de6740erased
+0x4de6740void erase
+destroying: 0x4de6740
+returning: 0x4de6820
+0x4de67b0erased
+0x4de67b0void erase
+destroying: 0x4de67b0
+returning: 0x4de6820
+0x4de6820erased
+0x4de6820void erase
+	step
+	step insert
+allocated: 0x4de6890
+1	step insert
+allocated: 0x4de6900
+1	step
+
+from inorder: : root = 0x4de6890: first = 5, 
+parent = 0, 
+right = 0x4de6900: right->first = 15, 
+left = 0
+
+from inorder: : root = 0x4de6900: first = 15, 
+parent = 0x4de6890: parent->first = 5, 
+right = 0x4de6510: right->first = 0, 
+left = 0
+
+from inorder: : root = 0x4de6510
+this is the end, my only friend, the end...
+: first = 0, 
+parent = 0x4de6900: parent->first = 15, 
+right = 0, 
+left = 0
+clear started, _size = 2
+0x4de6890erased
+0x4de6890void erase
+nonleft destroying: 0x4de6890
+0x4de6900erased
+0x4de6900void erase
+clear started, _size = 8
+0x4de60b0erased
+0x4de60b0void erase
+destroying: 0x4de60b0
+returning: 0x4de6190
+returning: 0x4de6270
+0x4de6190erased
+0x4de6190void erase
+nonleft destroying: 0x4de6190
+returning: 0x4de6350
+0x4de6200erased
+0x4de6200void erase
+destroying: 0x4de6200
+returning: 0x4de6270
+returning: 0x4de6350
+0x4de6270erased
+0x4de6270void erase
+nonleft destroying: 0x4de6270
+returning: 0x4de6350
+0x4de62e0erased
+0x4de62e0void erase
+destroying: 0x4de62e0
+returning: 0x4de63c0
+0x4de6350erased
+0x4de6350void erase
+destroying: 0x4de6350
+returning: 0x4de6430
+0x4de63c0erased
+0x4de63c0void erase
+destroying: 0x4de63c0
+returning: 0x4de6430
+0x4de6430erased
+0x4de6430void erase
+clear started, _size = 8
+0x4de5da0erased
+0x4de5da0void erase
+nonleft destroying: 0x4de5da0
+returning: 0x4de5cc0
+returning: 0x4de5e80
+0x4de5fd0erased
+0x4de5fd0void erase
+destroying: 0x4de5fd0
+returning: 0x4de5e10
+returning: 0x4de5e80
+0x4de5cc0erased
+0x4de5cc0void erase
+destroying: 0x4de5cc0
+returning: 0x4de5e10
+returning: 0x4de5e80
+0x4de5e10erased
+0x4de5e10void erase
+nonleft destroying: 0x4de5e10
+returning: 0x4de5e80
+0x4de6040erased
+0x4de6040void erase
+destroying: 0x4de6040
+returning: 0x4de5ef0
+0x4de5e80erased
+0x4de5e80void erase
+nonleft destroying: 0x4de5e80
+returning: 0x4de5ef0
+0x4de5f60erased
+0x4de5f60void erase
+destroying: 0x4de5f60
+returning: 0x4de5ef0
+0x4de5ef0erased
+0x4de5ef0void erase
+==2248648== 
+==2248648== HEAP SUMMARY:
+==2248648==     in use at exit: 160 bytes in 4 blocks
+==2248648==   total heap usage: 31 allocs, 27 frees, 82,056 bytes allocated
+==2248648== 
+==2248648== 40 bytes in 1 blocks are definitely lost in loss record 1 of 4
+==2248648==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2248648==    by 0x403B2C: __gnu_cxx::new_allocator<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node>::allocate(unsigned long, void const*) (new_allocator.h:127)
+==2248648==    by 0x4036A5: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::newNode(ft::pair<int, char>&) (newMap.hpp:204)
+==2248648==    by 0x4032C7: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:311)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4024E0: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::insert(ft::pair<int, char> const&) (newMap.hpp:550)
+==2248648==    by 0x40157D: main (testMap.cpp:14)
+==2248648== 
+==2248648== 40 bytes in 1 blocks are definitely lost in loss record 2 of 4
+==2248648==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2248648==    by 0x403B2C: __gnu_cxx::new_allocator<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node>::allocate(unsigned long, void const*) (new_allocator.h:127)
+==2248648==    by 0x4036A5: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::newNode(ft::pair<int, char>&) (newMap.hpp:204)
+==2248648==    by 0x4032C7: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:311)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4024E0: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::insert(ft::pair<int, char> const&) (newMap.hpp:550)
+==2248648==    by 0x402A16: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::map<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> > >(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> >, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> >, std::less<int> const&, std::allocator<ft::pair<int, char> > const&) (newMap.hpp:516)
+==2248648==    by 0x4019D4: main (testMap.cpp:32)
+==2248648== 
+==2248648== 40 bytes in 1 blocks are definitely lost in loss record 3 of 4
+==2248648==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2248648==    by 0x403B2C: __gnu_cxx::new_allocator<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node>::allocate(unsigned long, void const*) (new_allocator.h:127)
+==2248648==    by 0x4036A5: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::newNode(ft::pair<int, char>&) (newMap.hpp:204)
+==2248648==    by 0x4032C7: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:311)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4024E0: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::insert(ft::pair<int, char> const&) (newMap.hpp:550)
+==2248648==    by 0x402B15: void ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::insert<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> > >(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> >, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::MapIt<ft::pair<int, char> >) (newMap.hpp:564)
+==2248648==    by 0x401BA8: main (testMap.cpp:39)
+==2248648== 
+==2248648== 40 bytes in 1 blocks are definitely lost in loss record 4 of 4
+==2248648==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2248648==    by 0x403B2C: __gnu_cxx::new_allocator<ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node>::allocate(unsigned long, void const*) (new_allocator.h:127)
+==2248648==    by 0x4036A5: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::newNode(ft::pair<int, char>&) (newMap.hpp:204)
+==2248648==    by 0x4032C7: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:311)
+==2248648==    by 0x4033F2: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Insert(ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::Node*, ft::pair<int, char>&) (newMap.hpp:329)
+==2248648==    by 0x4024E0: ft::map<int, char, std::less<int>, std::allocator<ft::pair<int, char> > >::insert(ft::pair<int, char> const&) (newMap.hpp:550)
+==2248648==    by 0x402227: main (testMap.cpp:57)
+==2248648== 
+==2248648== LEAK SUMMARY:
+==2248648==    definitely lost: 160 bytes in 4 blocks
+==2248648==    indirectly lost: 0 bytes in 0 blocks
+==2248648==      possibly lost: 0 bytes in 0 blocks
+==2248648==    still reachable: 0 bytes in 0 blocks
+==2248648==         suppressed: 0 bytes in 0 blocks
+==2248648== 
+==2248648== For lists of detected and suppressed errors, rerun with: -s
+==2248648== ERROR SUMMARY: 4 errors from 4 contexts (suppressed: 0 from 0)

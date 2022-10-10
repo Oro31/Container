@@ -66,8 +66,8 @@ namespace ft {
 				MapIt(const MapIt &it) {*this = it;}
 
 				reference operator*() {return _p->pair;}
-				pointer operator->() {return &(_p->pair);}
-				const pointer operator->() const {return _p->pair;}
+				pointer operator->() {if (_p->end) {return NULL;} return &(_p->pair);}
+				const pointer operator->() const {if (_p->end) {return NULL;} return _p->pair;}
 				Node *base() {return _p;}
 				const Node *base() const {return _p;}
 
@@ -132,6 +132,7 @@ namespace ft {
 					std::cout << "\nfrom " << str;
 					std::cout << ": root = " << node;
 					if (node) {
+						if (node->end) {std::cout << "\nthis is the end, my only friend, the end...\n";}
 						std::cout << ": first = " << node->pair.first
 							<< ", \nparent = " << node->parent;
 						if (node->parent) {std::cout << ": parent->first = " << node->parent->pair.first;}
@@ -202,48 +203,13 @@ namespace ft {
 					Node	*ret = _allocNode.allocate(1);
 					ret->end = false;
 					ret->height = 1;
-					_allocNode.construct(&ret->pair, pr);
+					ret->pair = pr;
+//					_allocNode.construct(&ret->pair, pr);
 					ret->parent = NULL;
 					ret->left = NULL;
 					ret->right = NULL;
 					return ret;
 				}
-
-///////////////////////////************************////////////////////////////////
-
-
-				/*
-				Node *getPrevNode(Node *node) {
-					if (!node)
-						return NULL;
-					Node	*tmp = node;
-					if (tmp->left)
-						return maxValueNode(tmp->left);
-					if (!tmp->parent)
-						return NULL;
-					if (tmp->parent && tmp == tmp->parent->right)
-						return tmp->parent;
-					if (tmp->parent && tmp->parent->parent)
-						return tmp->parent->parent;
-					return tmp->left;
-				};
-
-				Node *getNextNode(Node *node) {
-					if (!node)
-						return NULL;
-					Node	*tmp = node;
-					std::cout << "gnn: " << tmp << "parent = " << tmp->parent->left << std::endl;
-					if (tmp->right)
-						return minValueNode(tmp->right);
-					if (!tmp->parent)
-						return NULL;
-					if (tmp->parent && tmp == tmp->parent->left)
-						return tmp->parent;
-					if (tmp->parent && tmp->parent->parent)
-						return tmp->parent->parent;
-					return tmp->right;
-				};
-				*/
 
 ///////////////////////////************************////////////////////////////////
 
@@ -338,7 +304,7 @@ namespace ft {
 				}
 
 				Node *Insert(Node *root,
-									Node *parent, value_type pair){
+									Node *parent, value_type &pair){
 					if (!root) {
 						root = newNode(pair);
 						root->parent = parent;
@@ -373,7 +339,6 @@ namespace ft {
 								root = RRR(root);
 						}
 					}
-
 					UpdateHeight(root);
 					return root;
 				}
@@ -394,7 +359,12 @@ namespace ft {
 								}
 								root->left->parent = root->parent;
 								root->left = Balance(root->left);
-								return root->left;
+								Node *tmpNode = root->left;
+								std::cout << "nonright destroying: " << root << std::endl;
+								_allocNode.destroy(root);
+								_allocNode.deallocate(root, 1);
+								root = NULL;
+								return tmpNode;
 							} else if (!root->left && root->right) {
 								if (root->parent) {
 									if (root->parent->pair.first < root->pair.first)
@@ -405,7 +375,11 @@ namespace ft {
 								}
 								root->right->parent = root->parent;
 								root->right = Balance(root->right);
-								return root->right;
+								Node *tmpNode = root->right;
+								_allocNode.destroy(root);
+								_allocNode.deallocate(root, 1);
+								root = NULL;
+								return tmpNode;
 							} else if (!root->left && !root->right) {
 								if (root->parent->pair.first < root->pair.first)
 									root->parent->right = NULL;
@@ -413,6 +387,8 @@ namespace ft {
 									root->parent->left = NULL;
 								if (root->parent)
 									UpdateHeight(root->parent);
+								_allocNode.destroy(root);
+								_allocNode.deallocate(root, 1);
 								root = NULL;
 								return NULL;
 							} else {
@@ -421,15 +397,15 @@ namespace ft {
 								while (tmpNode->left)
 									tmpNode = tmpNode->left;
 								value_type val = tmpNode->pair;
-								root->right = Delete(root->right, tmpNode->pair.first);
+								root->right = Delete(root->right, tmpNode->pair);
 								root->pair = val;
 								root = Balance(root);
 							}
 						} else if (root->pair.first < pr.first) {
-							root->right = Delete(root->right, pr.first);
+							root->right = Delete(root->right, pr);
 							root = Balance(root);
 						} else if (root->pair.first > pr.first) {
-							root->left = Delete(root->left, pr.first);
+							root->left = Delete(root->left, pr);
 							root = Balance(root);
 						}
 						if (root)
@@ -463,21 +439,21 @@ namespace ft {
 
 				void delEnd() {
 					if (_end) {
-						_end->parent->right = NULL;
-						_allocNode.destroy(&_end->pair);
-						_allocNode.deallocate(_end, 1);
-						_end = NULL;
+						if (_end->parent)
+							_end->parent->right = NULL;
 					}
 				}
 
 				void getEnd() {
-					if (!_end) {
+					if (!_end)
 						_end = newNode();
-						_end->end = true;
-						_end->parent = maxValueNode(_root);
-						if (_end->parent)
-							_end->parent->right = _end;
-					}
+					_end->end = true;
+					_end->right = NULL;
+					_end->left = NULL;
+					_end->parent = maxValueNode(_root);
+					if (_end->parent)
+						_end->parent->right = _end;
+
 				};
 
 				/////////////////////////////////////////////////////////////////////
@@ -523,7 +499,6 @@ namespace ft {
 				const Compare& comp = Compare(),
 				const Allocator& = Allocator()) :
 				_root(NULL), _end(NULL), _size(0) {
-			std::cout << "construct it\n";
 			for (InputIterator it = first; it != last; it++) {
 //				std::cout << "it = " << it->first;
 				insert(ft::make_pair(it->first, it->second));
@@ -533,16 +508,16 @@ namespace ft {
 		map(map<Key,T,Compare,Allocator>& other) {
 			*this = other;
 		};
-		~map() {};
+		~map() {this->clear(); _allocNode.destroy(_root); _allocNode.deallocate(_root, 1); _allocNode.destroy(_end); _allocNode.deallocate(_end, 1);};
 		map<Key,T,Compare,Allocator> &operator=(map<Key,T,Compare,Allocator>& other) {
 			this->insert(other.begin(), other.end());
 			return *this;
 		};
 		// iterators:
-		iterator begin() {iterator	tmp(minValueNode(_root)); return tmp;};
+		iterator begin() {if (_size == 0) {return iterator(_end);} iterator	tmp(minValueNode(_root)); return tmp;};
 //		const_iterator begin() const {return _root.find(_root.minValueNode(_root.base()));};
 //		iterator end() {iterator	tmp(maxValueNode(_root)); return tmp;};
-		iterator end() {getEnd(); return _end;};
+		iterator end() {getEnd(); return iterator(_end);};
 //		const_iterator end() const {return _root.getEnd();};
 //		reverse_iterator rbegin() {return _root.maxValueNode(&(_root._root));};
 //		const_reverse_iterator rbegin() const {return _root.maxValueNode(&(_root._root));};
@@ -558,9 +533,7 @@ namespace ft {
 		ft::pair<iterator, bool> insert(const value_type &val) {
 			bool b = false;
 			value_type	x = ft::make_pair<key_type, mapped_type>(val.first, val.second);
-//			if (!searchIt(_root, x)) {
 			if (!find(x.first).base()) {
-				std::cout << "let's insert: " << val.first << std::endl;
 				delEnd();
 				_root = Insert(_root, NULL, x);
 				getEnd();
@@ -579,31 +552,35 @@ namespace ft {
 					this->insert(*it);
 				}
 			};
-		/*
 		void erase(iterator position) {
-			delEnd(_end);
-			erase(position->first);
-			std::cout << _size << std::endl;
+			if (_size > 1)
+				_root = Delete(_root, *position);
+			else if (_size == 1) {
+				_allocNode.destroy(_root);
+				_allocNode.deallocate(_root, 1);
+				_root = NULL;
+			} else
+				_root = NULL;
 			if (_size > 0)
-				_end = getEnd();
+				_size--;
+			getEnd();
 		};
 		size_type erase(const key_type& x) {
 			size_type	ret = 0;
-			value_type	tmp = ft::make_pair<key_type, mapped_type>(x, mapped_type());
-			iterator	res = _root.find(tmp);
-			if (res.base()) {delEnd(_end); erase(tmp); ret++; _size--;}
-			_end = _root.getEnd();
+			if (find(x).base()) {
+				erase(find(x));
+			}
 			return ret;
 		};
 		void erase(iterator first, iterator last) {
-			for (iterator it = first; it != --last; it++) {
-				erase(it);
+			iterator	tmp;
+			while (first != last) {
+				tmp = first++;
+				erase(tmp);
 			}
 		};
-		*/
 //		void swap(map<Key,T,Compare,Allocator>&);
 		void clear() {
-			std::cout << "clear started\n";
 			this->erase(this->begin(), this->end());
 		};
 		// observers:
