@@ -631,7 +631,32 @@ namespace ft {
 				getEnd();
 				return ;
 			} else {
-				
+				Node	*futurRoot = minValueNode(position.base()->right);
+				_alloc.destroy(&(position.base()->pair));
+				if (futurRoot != position.base()->right) {
+					futurRoot->parent->left = futurRoot->right;
+					if (futurRoot->right)
+						futurRoot->right->parent = futurRoot->parent;
+					futurRoot->right = position.base()->right;
+					futurRoot->right->parent = futurRoot;
+				}
+				futurRoot->parent = position.base()->parent;
+				if (futurRoot->parent) {
+					if (futurRoot->parent->left == position.base())
+						futurRoot->parent->left = futurRoot;
+					else
+						futurRoot->parent->right = futurRoot;
+				} else
+					_root = futurRoot;
+				futurRoot->left = position.base()->left;
+				if (futurRoot->left)
+					futurRoot->left->parent = futurRoot;
+				_allocNode.deallocate(position.base(), 1);
+				--_size;
+				if (posParent)
+					_root = Balance(_root);
+				getEnd();
+				return ;
 			}
 			/*
 			if (_size > 1)
