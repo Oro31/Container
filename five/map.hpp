@@ -19,14 +19,10 @@ namespace ft {
 			typedef Allocator									allocator_type;
 			typedef value_type									&reference;
 			typedef const value_type									&const_reference;
-//			typedef typename Allocator::reference				reference;
-//			typedef typename Allocator::const_reference			const_reference;
 			typedef std::size_t									size_type;
 			typedef std::ptrdiff_t								difference_type;
 			typedef value_type									*pointer;
 			typedef const value_type									*const_pointer;
-//			typedef typename Allocator::pointer					pointer;
-//			typedef typename Allocator::const_pointer			const_pointer;
 		private:
 			struct Node {
 				bool			end;
@@ -85,10 +81,8 @@ namespace ft {
 					else if (tmp->parent && tmp == tmp->parent->left)
 						_p = tmp->parent;
 					else {
-//						while (tmp->parent && tmp->parent->pair.first <= _p->pair.first)
 						while (tmp->parent && _comp(tmp->parent->pair.first, _p->pair.first))
 							tmp = tmp->parent;
-//						if (tmp->parent && tmp->parent->pair.first > _p->pair.first)
 						if (tmp->parent && !_comp(tmp->parent->pair.first, _p->pair.first))
 							_p = tmp->parent;
 						else 
@@ -105,10 +99,8 @@ namespace ft {
 					else if (tmp->parent && tmp == tmp->parent->right)
 						_p = tmp->parent;
 					else {
-//						while (tmp->parent && tmp->parent->pair.first >= _p->pair.first)
 						while (tmp->parent && !_comp(tmp->parent->pair.first, _p->pair.first))
 							tmp = tmp->parent;
-//						if (tmp->parent && tmp->parent->pair.first < _p->pair.first)
 						if (tmp->parent && _comp(tmp->parent->pair.first, _p->pair.first))
 							_p = tmp->parent;
 						else 
@@ -136,25 +128,8 @@ namespace ft {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-				static void printNode(Node *node, std::string str, Node *end) {
-					std::cout << "\nfrom " << str;
-					std::cout << ": root = " << node;
-					if (node) {
-						if (node->end) {std::cout << "\nthis is the end, my only friend, the end...\n";}
-						std::cout << ": first = " << node->pair.first
-							<< ", \nparent = " << node->parent;
-						if (node->parent) {std::cout << ": parent->first = " << node->parent->pair.first;}
-						std::cout << ", \nright = " << node->right;
-						if (node->right && node->right != end) {std::cout << ": right->first = " << node->right->pair.first;}
-						std::cout << ", \nleft = " << node->left;
-						if (node->left) {std::cout << ": left->first = " << node->left->pair.first;}
-					}
-					std::cout << std::endl;
-				};
 
 ///////////////////////////************************////////////////////////////////
-
 
 				int max(int a, int b) {
 					return (a > b) ? a : b;
@@ -201,7 +176,6 @@ namespace ft {
 					Node	*ret = _allocNode.allocate(1);
 					ret->end = false;
 					ret->height = 1;
-//					_allocNode.construct(&ret->pair, value_type());
 					ret->parent = NULL;
 					ret->left = NULL;
 					ret->right = NULL;
@@ -230,7 +204,6 @@ namespace ft {
 					tmpNode->right = root;
 					tmpNode->parent = root->parent;
 					root->parent = tmpNode;
-//					if (tmpNode->parent && root->pair.first < tmpNode->parent->pair.first)
 					if (tmpNode->parent && _comp(root->pair.first, tmpNode->parent->pair.first))
 						tmpNode->parent->left = tmpNode;
 					else {
@@ -253,7 +226,6 @@ namespace ft {
 					tmpNode->left = root;
 					tmpNode->parent = root->parent;
 					root->parent = tmpNode;
-//					if (tmpNode->parent && root->pair.first < tmpNode->parent->pair.first)
 					if (tmpNode->parent && _comp(root->pair.first, tmpNode->parent->pair.first))
 						tmpNode->parent->left = tmpNode;
 					else {
@@ -318,7 +290,6 @@ namespace ft {
 					if (!root) {
 						root = newNode(pair);
 						root->parent = parent;
-//					} else if (root->pair.first > pair.first) {
 					} else if (!_comp(root->pair.first, pair.first)) {
 						root->left = Insert(root->left, root, pair);
 						int firstHeight = 0;
@@ -334,7 +305,6 @@ namespace ft {
 							else
 								root = LRR(root);
 						}
-//					} else if (root->pair.first < pair.first) {
 					} else if (_comp(root->pair.first, pair.first)) {
 						root->right = Insert(root->right, root, pair);
 						int firstHeight = 0;
@@ -359,11 +329,14 @@ namespace ft {
 
 
 				Node *Delete(Node *root, const value_type &pr) {
+					std::cout << "Delete called\n";
 					if (root) {
-						if (root->pair.first == pr.first) {
+						std::cout << "root->first = " << root->pair.first << std::endl;
+						if (!_comp(root->pair.first, pr.first)
+								&& !_comp(pr.first, root->pair.first)) {
+							std::cout << "this is the one: " << root << std::endl;
 							if (!root->right && root->left) {
 								if (root->parent) {
-//									if (root->parent->pair.first < root->pair.first)
 									if (_comp(root->parent->pair.first, root->pair.first))
 										root->parent->right = root->left;
 									else
@@ -371,15 +344,17 @@ namespace ft {
 									UpdateHeight(root->parent);
 								}
 								root->left->parent = root->parent;
-								root->left = Balance(root->left);
 								Node *tmpNode = root->left;
-								_alloc.destroy(&(root->pair));
-								_allocNode.deallocate(root, 1);
+								std::cout << "\ndestroying noright" << root->pair.first;
+//								_alloc.destroy(&(root->pair));
+//								_allocNode.deallocate(root, 1);
 								root = NULL;
+								tmpNode = Balance(tmpNode);
+//								root->left = Balance(root->left);
+//								return root->left;
 								return tmpNode;
 							} else if (!root->left && root->right) {
 								if (root->parent) {
-//									if (root->parent->pair.first < root->pair.first)
 									if (_comp(root->parent->pair.first, root->pair.first))
 										root->parent->right = root->right;
 									else
@@ -387,39 +362,44 @@ namespace ft {
 									UpdateHeight(root->parent);
 								}
 								root->right->parent = root->parent;
-								root->right = Balance(root->right);
 								Node *tmpNode = root->right;
-								_alloc.destroy(&(root->pair));
-								_allocNode.deallocate(root, 1);
+								std::cout << "\ndestroying noleft" << root->pair.first;
+//								_alloc.destroy(&(root->pair));
+//								_allocNode.deallocate(root, 1);
 								root = NULL;
+								tmpNode = Balance(tmpNode);
+//								root->right = Balance(root->right);
+//								return root->right;
 								return tmpNode;
 							} else if (!root->left && !root->right) {
-//								if (root->parent->pair.first < root->pair.first)
 								if (_comp(root->parent->pair.first, root->pair.first))
 									root->parent->right = NULL;
 								else
 									root->parent->left = NULL;
 								if (root->parent)
 									UpdateHeight(root->parent);
-								_alloc.destroy(&(root->pair));
-								_allocNode.deallocate(root, 1);
+								std::cout << "\ndestroying nochild " << root->pair.first;
+//								_alloc.destroy(&(root->pair));
+//								_allocNode.deallocate(root, 1);
 								root = NULL;
 								return NULL;
 							} else {
+//								std::cout << "\ndestroying " << root->pair.first;
 								Node *tmpNode = root;
 								tmpNode = tmpNode->right;
 								while (tmpNode->left)
 									tmpNode = tmpNode->left;
 								value_type val = ft::make_pair(tmpNode->pair.first, tmpNode->pair.second);
 								root->right = Delete(root->right, tmpNode->pair);
+//								_alloc.destroy(&(root->pair));
+//								_allocNode.deallocate(root, 1);
+//								root = tmpNode;
 								_alloc.construct(&(root->pair), val);
 								root = Balance(root);
 							}
-//						} else if (root->pair.first < pr.first) {
 						} else if (_comp(root->pair.first, pr.first)) {
 							root->right = Delete(root->right, pr);
 							root = Balance(root);
-//						} else if (root->pair.first > pr.first) {;
 						} else if (_comp(root->pair.first, pr.first)) {
 							root->left = Delete(root->left, pr);
 							root = Balance(root);
@@ -427,18 +407,11 @@ namespace ft {
 						if (root)
 							UpdateHeight(root);
 					}
+					std::cout << "endelete"<< std::endl;
 					return root;
 				}
 
 ///////////////////////////************************////////////////////////////////
-
-
-				void inOrderTree(Node *root) {
-					if (!root || root == _end) {return;}
-					inOrderTree(root->left);
-					printNode(root, "inorder: ", _end);
-					inOrderTree(root->right);
-				};
 
 				Node *searchIt(Node *node, value_type &pr) {
 					if (!node || node == _end)
@@ -519,23 +492,32 @@ namespace ft {
 			}
 			getEnd();
 		};
-		map(const map& other) {
-			*this = other;
+		map(const map& other) : _root(NULL), _end(NULL), _size(0), _comp(other._comp), _alloc(other._alloc) {
+			for (iterator it = other.begin(); it != other.end(); it++) {
+				insert(ft::make_pair(it->first, it->second));
+			}
+			getEnd();
 		};
 		~map() {
-			this->clear();
-			if (_root) {
-				_alloc.destroy(&(_root->pair));
-				_allocNode.deallocate(_root, 1);
+			if (_size > 0) {
+				this->clear();
+				/*
+				if (_root) {
+					_alloc.destroy(&(_root->pair));
+					_allocNode.deallocate(_root, 1);
+				}
+				*/
 			}
-			_allocNode.deallocate(_end, 1);
+			if (_end)
+				_allocNode.deallocate(_end, 1);
 		};
 		map &operator=(const map& other) {
-			this->clear();
+			if (_size > 0)
+				this->clear();
 			this->insert(other.begin(), other.end());
 			return *this;
 		};
-		allocator_type get_allocator() const {return _alloc;}
+
 		// iterators:
 		iterator begin() {if (_size == 0) {return iterator(_end);} iterator	tmp(minValueNode(_root)); return tmp;};
 		const_iterator begin() const {if (_size == 0) {return const_iterator(_end);} const_iterator tmp(minValueNode(_root)); return tmp;};
@@ -550,7 +532,8 @@ namespace ft {
 		size_type size() const {return _size;};
 		size_type max_size() const {/*return _alloc.max_size();*/return std::numeric_limits<difference_type>::max();};
 		// 23.3.1.2 element access:
-		T& operator[](const key_type &x) {return find(x)->second;};
+		allocator_type get_allocator() const {return _alloc;}
+		T& operator[](const key_type &x) {return ((this->insert(make_pair(x,mapped_type()))).first)->second;};
 		T& at(const Key &x) {
 			if (find(x).base()) {return find(x)->second;}
 			throw std::out_of_range("no element finded");
@@ -576,10 +559,81 @@ namespace ft {
 		template <class InputIterator>
 			void insert(InputIterator first, InputIterator last) {
 				for (iterator it = first; it != last; it++) {
-					this->insert(*it);
+					value_type	val = ft::make_pair(it->first, it->second);
+					std::cout << "inserting : " << val.first;
+					this->insert(val);
 				}
 			};
 		void erase(iterator position) {
+			Node	*posParent = position.base()->parent;
+
+			if (!position.base()->left && !position.base()->right) {
+				if (posParent) {
+					if (posParent->left == position.base())
+						posParent->left = NULL;
+					else
+						posParent->right = NULL;
+				} else {
+					_root = NULL;
+				}
+				_alloc.destroy(&(position.base()->pair));
+				_allocNode.deallocate(position.base(), 1);
+				--_size;
+				if (posParent)
+					_root = Balance(_root);
+				getEnd();
+				return ;
+			} else if (!position.base()->left && position.base()->right) {
+				if (!posParent) {
+					position.base()->right->parent = NULL;
+					Node	*tmp = position.base()->right;
+					_alloc.destroy(&(position.base()->pair));
+					_allocNode.deallocate(position.base(), 1);
+					--_size;
+					_root = tmp;
+					getEnd();
+					return ;
+				}
+				if (posParent->left == position.base())
+					posParent->left = position.base()->right;
+				else
+					posParent->right = position.base()->right;
+				_alloc.destroy(&(position.base()->pair));
+				_allocNode.deallocate(position.base(), 1);
+				--_size;
+				if (posParent)
+					_root = Balance(_root);
+				getEnd();
+				return ;
+			} else if (position.base()->left && !position.base()->right) {
+				/*
+				if (!posParent) {
+					position.base()->left->parent = NULL;
+					Node	*tmp = position.base()->left;
+					_alloc.destroy(&(position.base()->pair));
+					_allocNode.deallocate(position.base(), 1);
+					--_size;
+					_root = tmp;
+					getEnd();
+					return ;
+				}
+				*/
+				if (posParent->left == position.base())
+					posParent->left = position.base()->left;
+				else
+					posParent->right = position.base()->left;
+				position.base()->left->parent = posParent;
+				_alloc.destroy(&(position.base()->pair));
+				_allocNode.deallocate(position.base(), 1);
+				--_size;
+				if (posParent)
+					_root = Balance(_root);
+				getEnd();
+				return ;
+			} else {
+				
+			}
+			/*
 			if (_size > 1)
 				_root = Delete(_root, *position);
 			else if (_size == 1) {
@@ -590,6 +644,7 @@ namespace ft {
 				_root = NULL;
 			if (_size > 0)
 				_size--;
+				*/
 			getEnd();
 		};
 		size_type erase(const key_type& x) {
@@ -600,9 +655,11 @@ namespace ft {
 			return ret;
 		};
 		void erase(iterator first, iterator last) {
-			iterator	tmp;
 			while (first != last) {
-				tmp = first++;
+				iterator	tmp;
+				tmp = first;
+				first++;
+//				std::cout << "erase: " << tmp->first << std::endl;
 				erase(tmp);
 			}
 		};
@@ -615,7 +672,6 @@ namespace ft {
 			this->erase(this->begin(), this->end());
 		};
 		// observers:
-//		void printmap() {this->inOrderTree(_root);}
 		key_compare key_comp() const {return _comp;};
 		value_compare value_comp() const {return value_comp(_comp);};
 		// 23.3.1.3 map operations:
