@@ -533,7 +533,7 @@ namespace ft {
 				}
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
-				if (posParent && _root && _size > 2)
+				if (posParent && _root/* && _size > 2*/)
 					_root = Balance(_root);
 				getEnd();
 				return ;
@@ -556,7 +556,7 @@ namespace ft {
 				//////////////////////////////
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
-				if (posParent && _root && _size > 2)
+				if (posParent && _root/* && _size > 2*/)
 					_root = Balance(_root);
 				getEnd();
 				return ;
@@ -579,7 +579,7 @@ namespace ft {
 				//////////////////////////////
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
-				if (posParent && _root && _size > 2)
+				if (posParent && _root/* && _size > 2*/)
 					_root = Balance(_root);
 				getEnd();
 				return ;
@@ -609,7 +609,7 @@ namespace ft {
 				if (futurRoot->left)
 					futurRoot->left->parent = futurRoot;
 				_allocNode.deallocate(position.base(), 1);
-				if (posParent && _root && _size > 2)
+				if (posParent && _root/* && _size > 2*/)
 					_root = Balance(_root);
 				getEnd();
 				return ;
