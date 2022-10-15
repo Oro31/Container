@@ -514,7 +514,6 @@ namespace ft {
 			void insert(InputIterator first, InputIterator last) {
 				for (iterator it = first; it != last; it++) {
 					value_type	val = ft::make_pair(it->first, it->second);
-					std::cout << "inserting : " << val.first;
 					this->insert(val);
 				}
 			};
@@ -530,7 +529,7 @@ namespace ft {
 					else
 						posParent->right = NULL;
 				} else {
-					_root = NULL;
+//					_root = NULL;
 				}
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
@@ -552,7 +551,9 @@ namespace ft {
 					posParent->left = position.base()->right;
 				else
 					posParent->right = position.base()->right;
-				posParent->left->parent = posParent;
+				//////////ICI//////////////////
+				position.base()->right->parent = posParent;
+				//////////////////////////////
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
 				if (posParent && _root && _size > 2)
@@ -573,7 +574,9 @@ namespace ft {
 					posParent->left = position.base()->left;
 				else
 					posParent->right = position.base()->left;
-				posParent->left->parent = posParent;
+				//////////ICI//////////////////
+				position.base()->left->parent = posParent;
+				//////////////////////////////
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
 				if (posParent && _root && _size > 2)
@@ -582,6 +585,10 @@ namespace ft {
 				return ;
 			} else {
 				Node	*futurRoot = minValueNode(position.base()->right);
+				//////////ICI////////////////
+				if (!futurRoot || futurRoot == _end)
+					futurRoot = maxValueNode(position.base()->left);
+				//////////////////////////////
 				_alloc.destroy(&(position.base()->pair));
 				if (futurRoot != position.base()->right) {
 					futurRoot->parent->left = futurRoot->right;
