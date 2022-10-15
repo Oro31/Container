@@ -87,7 +87,6 @@ namespace ft {
 						_p = _p->parent;
 						while (_p && _comp(tmp->pair.first, _p->pair.first) == false)
 							_p = _p->parent;
-
 					}
 					return *this;
 				};
@@ -361,10 +360,8 @@ namespace ft {
 					_end->right = NULL;
 					_end->left = NULL;
 					_end->parent = maxValueNode(_root);
-					std::cout << _end->parent << "\t" << _root << "\t";
 					if (_end->parent)
 						_end->parent->right = _end;
-					std::cout << "end is :" << _end << std::endl;
 
 				};
 
@@ -416,6 +413,7 @@ namespace ft {
 			}
 //			getEnd();
 		};
+
 		map(const map& other) : _root(NULL), _end(NULL), _size(0), _comp(other._comp), _alloc(other._alloc) {
 			getEnd();
 			for (iterator it = other.begin(); it != other.end(); it++) {
@@ -423,6 +421,7 @@ namespace ft {
 			}
 //			getEnd();
 		};
+
 		~map() {
 			if (_size > 0) {
 				this->clear();
@@ -436,6 +435,7 @@ namespace ft {
 			if (_end)
 				_allocNode.deallocate(_end, 1);
 		};
+
 		map &operator=(const map& other) {
 			if (_size > 0)
 				this->clear();
@@ -452,25 +452,34 @@ namespace ft {
 			}
 			return iterator(minValueNode(_root), _end);
 		}
+
 		const_iterator begin() const {
 			if (_size == 0) {
 				return end();
 			}
 			return const_iterator(minValueNode(_root), _end);
 		}
+
 		iterator end() {return iterator(_end, _end);}
+
 		const_iterator end() const {return const_iterator(_end, _end);}
+
 //		reverse_iterator rbegin() {return _root.maxValueNode(&(_root._root));};
 //		const_reverse_iterator rbegin() const {return _root.maxValueNode(&(_root._root));};
 //		reverse_iterator rend() {return _root.minValueNode(&(_root._root));};
 //		const_reverse_iterator rend() const {return _root.minValueNode(&(_root._root));};
 		// capacity:
 		bool empty() const {return _size == 0;}
+
 		size_type size() const {return _size;}
+
 		size_type max_size() const {return std::numeric_limits<difference_type>::max();}
+
 		// 23.3.1.2 element access:
 		allocator_type get_allocator() const {return _alloc;}
+
 		T& operator[](const key_type &x) {return ((this->insert(make_pair(x,mapped_type()))).first)->second;}
+
 		T& at(const Key &x) {
 			if (find(x).base()) {return find(x)->second;}
 			throw std::out_of_range("no element finded");
@@ -478,7 +487,6 @@ namespace ft {
 		// modifiers:
 		ft::pair<iterator, bool> insert(const value_type &val) {
 			if (!_root) {
-				std::cout << "je s'appel\n";
 				_root = Insert(_root, NULL, ft::make_pair(val.first, val.second));
 				++_size;
 				getEnd();
@@ -496,25 +504,12 @@ namespace ft {
 			getEnd();
 			return ft::make_pair<iterator, bool>(find(val.first), true);
 		}
-		/*
-			bool b = false;
-			std::cout << "wait for it\n";
-//			value_type	x = ft::make_pair<key_type, mapped_type>(val.first, val.second);
-			if (!searchIt(_root, val)) {
-				std::cout << "coucou\n";
-				delEnd();
-				_root = Insert(_root, NULL, val);
-				getEnd();
-				b = true;
-				_size++;
-			}
-			iterator	res(searchIt(_root, val), _end);
-			return ft::make_pair(res, b);
-			*/
+
 		iterator insert(iterator position, const value_type& x) {
 			(void)position;
 			return this->insert(x).first;
 		};
+
 		template <class InputIterator>
 			void insert(InputIterator first, InputIterator last) {
 				for (iterator it = first; it != last; it++) {
@@ -557,6 +552,7 @@ namespace ft {
 					posParent->left = position.base()->right;
 				else
 					posParent->right = position.base()->right;
+				posParent->left->parent = posParent;
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
 				if (posParent && _root && _size > 2)
@@ -577,7 +573,7 @@ namespace ft {
 					posParent->left = position.base()->left;
 				else
 					posParent->right = position.base()->left;
-				position.base()->left->parent = posParent;
+				posParent->left->parent = posParent;
 				_alloc.destroy(&(position.base()->pair));
 				_allocNode.deallocate(position.base(), 1);
 				if (posParent && _root && _size > 2)
@@ -633,7 +629,6 @@ namespace ft {
 		};
 		void erase(iterator first, iterator last) {
 			while (first != last) {
-				std::cout << "erase: " << first->first << std::endl;
 				erase(first++);
 			}
 		};
