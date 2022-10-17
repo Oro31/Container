@@ -310,7 +310,7 @@ namespace ft {
 						if (root->right)
 							secondHeight = root->right->height;
 						if (abs(firstHeight - secondHeight) == 2) {
-							if (root->left && pair.first < root->left->pair.first)
+							if (root->left && _comp(pair.first, root->left->pair.first))
 								root = LLR(root);
 							else
 								root = LRR(root);
@@ -325,7 +325,7 @@ namespace ft {
 						if (root->right)
 							secondHeight = root->right->height;
 						if (abs(firstHeight - secondHeight) == 2) {
-							if (root->right && pair.first < root->right->pair.first)
+							if (root->right && _comp(pair.first, root->right->pair.first))
 								root = RLR(root);
 							else
 								root = RRR(root);
@@ -670,49 +670,42 @@ namespace ft {
 		};
 
 		iterator lower_bound(const key_type& x) {
-			iterator	ret = this->begin();
-			while (ret != this->end() && ret->first < x)
-				ret++;
+			iterator	ret = begin();
+			while (ret != end() && _comp(ret->first, x))
+				++ret;
 			return ret;
 		};
 
 		const_iterator lower_bound(const key_type& x) const {
-			iterator	ret = this->begin();
-			while (ret != this->end() && ret->first < x)
-				ret++;
+			const_iterator	ret = begin();
+			while (ret != end() && _comp(ret->first, x))
+				++ret;
 			return ret;
 		};
 
 		iterator upper_bound(const key_type& x) {
-			iterator	ret = this->begin();
-			while (ret != this->end() && ret->first <= x)
-				ret++;
+			iterator	ret = begin();
+			while (ret != end() && !_comp(x, ret->first))
+				++ret;
 			return ret;
 		};
 
 		const_iterator upper_bound(const key_type& x) const {
-			iterator	ret = this->begin();
-			while (ret != this->end() && ret->first <= x)
-				ret++;
+			const_iterator	ret = begin();
+			while (ret != end() && !_comp(x, ret->first))
+				++ret;
 			return ret;
-		};
+		}
 
-		/*		
-		pair<iterator,iterator> equal_range(const key_type& x);
-		pair<const_iterator,const_iterator> equal_range(const key_type& x) const;
-		*/
+		pair<iterator,iterator> equal_range(const key_type& x) {
+			return (ft::make_pair(lower_bound(x), upper_bound(x)));
+		}
+
+		pair<const_iterator,const_iterator> equal_range(const key_type& x) const {
+			return (ft::make_pair(lower_bound(x), upper_bound(x)));
+		}
 	};
-	/*
-	template<class Iterator>
-		bool operator!=(const Iterator &lhs, const Iterator &rhs) {
-			return lhs.base() != rhs.base();
-		}
 
-	template<class Iterator>
-		bool operator==(const Iterator &lhs, const Iterator &rhs) {
-			return !(lhs != rhs);
-		}
-*/
 	template<class Key, class T, class Compare, class Alloc>
 		bool	operator==(const map<Key, T, Compare, Alloc> &lhs,
 							const map<Key, T, Compare, Alloc> &rhs) {
@@ -725,7 +718,7 @@ namespace ft {
 		bool	operator<(const map<Key, T, Compare, Alloc> &lhs,
 							const map<Key, T, Compare, Alloc> &rhs) {
 			return (ft::lexicographical_compare(lhs.begin(), lhs.end(),
-											rhs.begin(), rhs.begin()));
+											rhs.begin(), rhs.end()));
 		}
 
 	template<class Key, class T, class Compare, class Alloc>
