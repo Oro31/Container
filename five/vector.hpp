@@ -1,30 +1,31 @@
 #include <memory>
 #include <iostream>
 #include "VecIterator.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft {
-	template <class T, class Allocator = std::allocator<T>>
+	template <class T, class Allocator = std::allocator<T> >
 	class vector {
 		public:
-			typedef typename Allocator::reference				&reference;
-			typedef typename Allocator::const_reference			&const_reference;
-			typedef VecIterator<T>								iterator;
-			typedef const VecIterator<T>						const_iterator;
-			typedef std::size_t									size_type;
-			typedef std::ptrdiff_t								difference_type;
 			typedef T											value_type;
 			typedef Allocator									allocator_type;
-			typedef typename Allocator::pointer					pointer;
-			typedef typename Allocator::const_pointer			const_pointer;
-			typedef std::reverse_iterator<iterator>				reverse_iterator;
-			typedef std::reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef value_type									&reference;
+			typedef const value_type							&const_reference;
+			typedef std::size_t									size_type;
+			typedef std::ptrdiff_t								difference_type;
+			typedef VecIterator<T>								iterator;
+			typedef VecIterator<const T>								const_iterator;
+			typedef value_type									*pointer;
+			typedef const value_type							*const_pointer;
+			typedef ft::reverse_iterator<iterator>				reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
 		protected:
 			Allocator	the_allocator;
 
 		private:
-			iterator	buffer_start;
 			iterator	current_end;
+			iterator	buffer_start;
 			iterator	end_of_buffer;
 
 
@@ -34,19 +35,21 @@ namespace ft {
 			//construct/copy/destroy
 			//
 			//
-			explicit vector(const allocator_type &alloc = allocator_type()) :
-				buffer_start(0), current_end(0), end_of_buffer(0) {the_allocator = alloc;};
+			explicit vector(const allocator_type &alloc = allocator_type()) : current_end(NULL) {
+				buffer_start = current_end;
+				end_of_buffer = current_end;
+				the_allocator = alloc;
+			}
 			//
 			explicit vector(size_type n, const value_type &val = value_type(),
 					const allocator_type &alloc = allocator_type()) {
 				the_allocator = alloc;
-				this->assign(n, val);
+				assign(n, val);
 			};
 			//
 			template<class InputIterator>
 				vector(InputIterator first, InputIterator last,
-					const allocator_type &alloc = allocator_type()) : buffer_start(0),
-			current_end(0), end_of_buffer(0) {
+					const allocator_type &alloc = allocator_type()) : current_end(NULL) {
 				the_allocator = alloc;
 				this->assign(first, last);
 			};
@@ -65,26 +68,13 @@ namespace ft {
 			//
 			vector &operator=(const vector<T, Allocator> &other) {
 				the_allocator = other.get_allocator();
-				this->assign(other.begin(), other.end());
+				assign(other.begin(), other.end());
 				return *this;
 			};
 			//
-			template<class InputIt>
-				void assign(InputIt first, InputIt last) {
-					if (last - first > this->capacity()) {this->reserve(last - first);}
-					for (iterator it = buffer_start; it != current_end; it++) {
-						it->~value_type();
-					}
-					current_end = buffer_start;
-					for (iterator it = first; it != last; it++) {
-						the_allocator.construct(current_end.base(), *it);
-						current_end++;
-					}
-				};
-			//
-			void assign(size_type n, const T &value) {
-				if (n > this->capacity()) {this->reserve(n);}
-				for (iterator it = buffer_start; it != current_end; it++) {
+			void assign(size_type n, const value_type &value) {
+				reserve(size() + n);
+				for (iterator it = buffer_start; it != current_end; ++it) {
 					it->~value_type();
 				}
 				current_end = buffer_start;
@@ -94,8 +84,22 @@ namespace ft {
 				}
 			};
 			//
+			template<class InputIt>
+				void assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type * = 0) {
+					size_type	n = 0;
+					for (InputIt it = first; it != last; ++it) {++n;}
+					reserve(n);
+					for (iterator it = buffer_start; it != current_end; it++) {
+						it->~value_type();
+					}
+					current_end = buffer_start;
+					for (InputIt it = first; it != last; it++) {
+						the_allocator.construct(current_end.base(), *it);
+						current_end++;
+					}
+				};
+			//
 			allocator_type get_allocator() const {return the_allocator;};
-
 			//
 			//iterators//
 			//
@@ -104,10 +108,11 @@ namespace ft {
 			const_iterator			begin() const {return buffer_start;};
 			iterator				end() {return current_end;};
 			const_iterator			end() const {return current_end;};
-			reverse_iterator		rbegin() {return current_end;};
-			const_reverse_iterator	rbegin() const {return current_end;};
-			reverse_iterator		rend() {return buffer_start;};
-			const_reverse_iterator	rend() const {return buffer_start;};
+
+			reverse_iterator		rbegin() {return reverse_iterator(end());};
+			const_reverse_iterator	rbegin() const {return const_reverse_iterator(end());};
+			reverse_iterator		rend() {return reverse_iterator(begin());};
+			const_reverse_iterator	rend() const {return const_reverse_iterator(begin());};
 
 			//
 			//capacity//
@@ -118,35 +123,36 @@ namespace ft {
 			size_type	max_size() const {return the_allocator.max_size();};
 			//
 			void		resize(size_type sz, T c = T()) {
-				if (sz <= this->size()) {
-					for (size_type i = this->size(); i > sz; i--) {
-						current_end--;
+				if (sz <= size()) {
+					for (size_type i = size(); i > sz; --i) {
+						--current_end;
+						current_end->~value_type();
 					}
 				} else {
-					if (sz > this->capacity()) {
-						this->reserve(sz);
+					if (sz > capacity()) {
+						reserve(sz);
 					}
-					for (iterator last = buffer_start + sz; current_end != last; current_end++) {
+					for (iterator last = buffer_start + sz; current_end != last; ++current_end) {
 						the_allocator.construct(current_end.base(), c);
 					}
 				}
 			};
 			//
-			size_type capacity() const {return end_of_buffer - buffer_start;};
+			size_type capacity() const {return end_of_buffer - buffer_start;}
 			//
-			bool empty() {return !(current_end - buffer_start);};
+			bool empty() const {return current_end == buffer_start;}
 			//
 			void reserve(size_type new_cap) {
-				if (new_cap > this->capacity()) {
+				if (new_cap > capacity()) {
+					size_type	new_capacity = (capacity() + 1) * 2 + new_cap;
 					vector<T, Allocator>	p(*this);
 					this->~vector();
-					buffer_start = the_allocator.allocate((this->capacity() + 1) * new_cap * 2);
-					end_of_buffer = buffer_start;
-					end_of_buffer += (new_cap * 2);
+					buffer_start = the_allocator.allocate(new_capacity);
+					end_of_buffer = buffer_start + new_capacity;
 					current_end = buffer_start;
-					current_end += p.size();
-					for (iterator it = buffer_start; it != current_end; it++) {
-						the_allocator.construct(it.base(), *(p.buffer_start));
+					for (iterator it = p.begin(); it != p.end(); ++it) {
+						the_allocator.construct(current_end.base(), *it);
+						++current_end;
 					}
 				}
 			};
@@ -202,7 +208,7 @@ namespace ft {
 			//
 			
 			void	push_back(const T &x) {
-				if (this->size() == this->capacity()) {this->reserve(1);}
+				reserve(size() + 1);
 				*current_end = x;
 				current_end++;
 			};
@@ -215,7 +221,7 @@ namespace ft {
 			iterator	insert(iterator position, const T &x) {
 				size_type	pos = position - buffer_start;
 				vector<T, Allocator>	p(*this);
-				if (this->size() == this->capacity()) {this->reserve(1);}
+				reserve(size() + 1);
 				current_end++;
 				iterator	tmp = buffer_start;
 				tmp += pos;
@@ -227,70 +233,85 @@ namespace ft {
 					*it = *tpmp;
 					tpmp++;
 				}
-				tmp--;
-				return tmp;
+				return buffer_start + pos;
+			};
+			//
+			iterator	insert(iterator position, size_type count, const T &x) {
+				size_type	pos = position - buffer_start;
+				vector<T, Allocator>	p(*this);
+				reserve(size() + count);
+				current_end += count;
+				iterator	tmp = buffer_start;
+				tmp += pos;
+				for (size_type i = 0; i < count; ++i) {
+					tmp->~value_type();
+					the_allocator.construct(tmp.base(), x);
+					++tmp;
+				}
+				iterator	tpmp = p.buffer_start;
+				tpmp += pos;
+				for (iterator it = tmp; it != current_end; it++) {
+					*it = *tpmp;
+					++tpmp;
+				}
+				return buffer_start + pos;
 			};
 			//
 			template<class InputIt>
-				void	insert(iterator position, InputIt first, InputIt last) {
+				void	insert(iterator position, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type * = 0) {
+					size_type	n = 0;
+
+					for (InputIt it = first; it != last; ++it) {++n;}
+
 					size_type	pos = position - buffer_start;
 					vector<T, Allocator>	p(*this);
-					if (this->size() + (last - first) >= this->capacity) {this->reserve(last - first);}
-					current_end += last - first;
-					iterator	tmp = buffer_start;
-					tmp += pos;
-					for (iterator it = tmp; first != last; it++) {
-						it->~value_type();
-						the_allocator.construct(it.base(), *first);
-						first++;
+
+					reserve(size() + n);
+					current_end += n;
+
+					iterator	tmp = buffer_start + pos;
+					while (tmp != end_of_buffer && first != last) {
+//						if (tmp.base())
+//							tmp->~value_type();
+						the_allocator.construct(tmp.base(), *first);
+						++tmp;
+						++first;
 					}
-					iterator	tpmp = p.buffer_start;
-					tpmp += pos;
-					for (iterator it = ++tmp; it != current_end; it++) {
-						*it = *tpmp;
-						tpmp++;
+					iterator	tpmp = p.buffer_start + pos;
+					while (tmp != end_of_buffer && tpmp != p.current_end) {
+						*tmp = *tpmp;
+						++tmp;
+						++tpmp;
 					}
-					tmp--;
 				};
 			//
 			iterator	erase(iterator position) {
-				if (position < buffer_start || position >= current_end) {
-					return buffer_start;
-				}
-				iterator	it = buffer_start;
-				while (it != position) {it++;}
-				it->~value_type();
-				while (it != current_end) {
+				position->~value_type();
+				--current_end;
+				for (iterator it = position; it != current_end; ++it) {
 					*it = *(it + 1);
-					it++;
 				}
-				current_end--;
-				return (position + 1);
+				return position;
 			};
 			//
 			iterator	erase(iterator first, iterator last) {
-				if (last < buffer_start || first > current_end) {
-					return (current_end - 1);
-				}
-				iterator	it = buffer_start;
-				if (first >= buffer_start) {
-					while (it != first) {it++;}
-				}
-				size_type	n = 0;
-				//it == (first || b_start)
-				while (it != last && it != current_end) {
+				if (first == last)
+					return last;
+				size_type	st_f = last - buffer_start;
+				vector<T, Allocator>	p(*this);
+
+				for (iterator it = first; it != last; ++it) {
 					it->~value_type();
-					it++;
-					n++;
+					--current_end;
 				}
-				//it == (last || current_end)
-				while (it != current_end) {
-					*first = *it;
-					it++;
-					first++;
+
+				iterator	tpmp = p.buffer_start + st_f;
+				for (iterator it = first; tpmp != p.current_end; ++it) {
+					*it = *tpmp;
+					++tpmp;
 				}
-				current_end = current_end - n;
-				return (first + n);
+
+				return first;
 			};
 			//
 			void	swap(vector<T, Allocator> &other) {
@@ -308,7 +329,7 @@ namespace ft {
 			//
 			void	clear() {
 				while (current_end != buffer_start) {
-					current_end--;
+					--current_end;
 					current_end->~value_type();
 				}
 			};
@@ -321,8 +342,8 @@ namespace ft {
 	template <class T, class Allocator>
 		bool	operator==(const vector<T, Allocator> &x,
 					const vector<T, Allocator> &y) {
-			VecIterator<T>	itx = x.begin();
-			VecIterator<T>	ity = y.begin();
+			typename vector<T, Allocator>::const_iterator	itx = x.begin();
+			typename vector<T, Allocator>::const_iterator	ity = y.begin();
 			while (itx != x.end() && ity != y.end()) {
 				if (*itx != *ity) {
 					return false;
@@ -335,8 +356,8 @@ namespace ft {
 	template <class T, class Allocator>
 		bool	operator<(const vector<T, Allocator> &x,
 					const vector<T, Allocator> &y) {
-			VecIterator<T>	itx = x.begin();
-			VecIterator<T>	ity = y.begin();
+			typename vector<T, Allocator>::const_iterator	itx = x.begin();
+			typename vector<T, Allocator>::const_iterator	ity = y.begin();
 			while (itx != x.end() && ity != y.end()) {
 				if (*itx >= *ity) {
 					return false;
