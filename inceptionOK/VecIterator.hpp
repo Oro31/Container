@@ -65,7 +65,7 @@ namespace ft {
 			template <class Iterator>
 			difference_type operator-(const VecIterator<Iterator> &second) const {
 				return (base() - second.base());
-			};
+			}
 
 			template <class Iterator>
 				bool operator==(const VecIterator<Iterator> &other) const {return base() == other.base();};
@@ -90,14 +90,14 @@ namespace ft {
 	template<class Iterator>
 		Iterator operator+(const typename Iterator::difference_type &n, const Iterator &it) {
 			Iterator r(it);
-			r+=n;
+			r += n;
 			return r;
 		};
 
 	template<class Iterator>
 		Iterator operator-(const typename Iterator::difference_type &n, const Iterator &it) {
 			Iterator r(it);
-			r-=n;
+			r -= n;
 			return r;
 		};
 

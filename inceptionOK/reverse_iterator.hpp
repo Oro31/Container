@@ -55,10 +55,8 @@ namespace ft {
 						bool operator<=(const reverse_iterator<InputIterator>& y) const {
 							return base() >= y.base();
 						}
-					template <class InputIterator>
-						typename reverse_iterator<InputIterator>::difference_type operator-(
-								const reverse_iterator<InputIterator> &y) const {
-							return y.base() - base();
+					difference_type operator-(const reverse_iterator<Iterator> &y) const {
+							return base() - y.base();
 						}
 		 };
 	template <class Iterator>
@@ -67,6 +65,7 @@ namespace ft {
 				const reverse_iterator<Iterator>& y) {
 			return y.base() - x.base();
 		}
+
 	template <class Iterator>
 		reverse_iterator<Iterator> operator+(
 				typename reverse_iterator<Iterator>::difference_type n,
